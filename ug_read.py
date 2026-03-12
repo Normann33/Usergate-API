@@ -18,8 +18,9 @@ def get_item_names(item_list, all_item_ids, item_ids):
             item_names.append(item_name)
     else:
         item_names.append('any')
-    item_names = ', '.join(item_names)
+    # item_names = ', '.join(item_names)
     return item_names
+
 
 
 def main():
@@ -51,6 +52,8 @@ def main():
         
         for rule in all_rules.get('items', []):
             rule_name = rule.get('name', 'Без имени')
+            print('=====================RULE===================')
+            print(rule_name)
             rule_position = rule.get('position', '0')
             rule_action = rule.get('action', '-')
             
@@ -61,10 +64,14 @@ def main():
             
             src_addr_list = rule.get('src_ips')
             src_addr_ids = addr_lists.get_addr_list_id(src_addr_list)
-            print(src_addr_ids)
             src_addr_list_names = get_item_names(addr_lists, all_addr_lists_id, src_addr_ids)
-            src_addr_list_items = addr_lists.get_addr_list_items(src_addr_ids)
-            print(f'Ip адреса источника {src_addr_list_names}: {src_addr_list_items}')
+
+            src_addr_dict = addr_lists.get_address_list_dict(src_addr_ids, addr_lists, src_addr_list_names)
+            if src_addr_dict:
+                for i in src_addr_dict:
+                    print(f'{i.get('name')}: {i.get('value')} ')
+            else:
+                print('any')
             
             dst_zone_ids = rule.get('dst_zones', [])
             dst_zone_names = get_item_names(zones, all_zones_id, dst_zone_ids)
@@ -73,7 +80,13 @@ def main():
             dst_addr_list = rule.get('dst_ips')
             dst_addr_ids = addr_lists.get_addr_list_id(dst_addr_list)
             dst_addr_list_names = get_item_names(addr_lists, all_addr_lists_id, dst_addr_ids)
-            print(f'Ip адреса назначения {dst_addr_list_names}')
+            
+            dst_addr_dict = addr_lists.get_address_list_dict(dst_addr_ids, addr_lists, dst_addr_list_names)
+            if dst_addr_dict:
+                for i in dst_addr_dict:
+                    print(f'{i.get('name')}: {i.get('value')} ')
+            else:
+                print('any')
         
         # print(zones.get_by_key(all_zones_id, 9))
         # print(zones.get_by_key(all_zones_name, 'gDMZ VPN'))

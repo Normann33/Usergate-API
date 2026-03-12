@@ -32,18 +32,34 @@ class AddressList:
             return addr_list_id
         
     
-    def get_addr_list_items(self, addr_list_ids):
+    def get_addr_list_items(self, addr_list_id):
         addr_list_values = []
-        for addr_list_id in addr_list_ids:
-            try:
-                addr_list_items = self.client.server.v2.nlists.list.list(self.client.auth_token, addr_list_id, 0, 1000, {}, [])
-                for item in addr_list_items.get('items', []):
-                            item_value = item.get('value', '—')
-                            addr_list_values.append(item_value)
-            except Exception as e:
+        try:
+            addr_list_items = self.client.server.v2.nlists.list.list(self.client.auth_token, int(addr_list_id), 0, 1000, {}, [])
+            for item in addr_list_items.get('items', []):
+                        item_value = item.get('value', '—')
+                        addr_list_values.append(item_value)
+        except xmlrpc.client.Fault as e:
+            if e.faultCode == 2010 and 'List content is not available' in e.faultString:
                 return "Нельзя просмотреть список"
-            addr_list_values = ', '.join(addr_list_values)
+            else:
+                raise
+        addr_list_values = ', '.join(addr_list_values)
         return addr_list_values
+    
+    def get_address_list_dict(self, addr_ids, addr_lists, addr_list_names):
+        '''Возвращаем словарь ip адресов, где name - имя списка, value - сами ip адреса'''
+        addr_list_items = []
+        if len(addr_ids) > 0:
+            for id in addr_ids:
+                addr_list_items.append(addr_lists.get_addr_list_items(id))
+                # print(f'Ip адреса источника: {src_addr_list_items}')
+        
+        src_ip_dict = [
+            {'name': name, 'value': value}
+            for name, value in zip(addr_list_names, addr_list_items)
+        ]
+        return src_ip_dict
     
     def create_list(self, new_list):
         result = self.client.server.v2.nlists.add(self.client.auth_token, new_list)
