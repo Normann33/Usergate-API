@@ -21,7 +21,12 @@ def get_item_names(item_list, all_item_ids, item_ids):
     # item_names = ', '.join(item_names)
     return item_names
 
-
+def addr_output(addr_dict):
+    if addr_dict:
+        for i in addr_dict:
+            print(f'{i.get('name')}: {i.get('value')} ')
+    else:
+        print('any')
 
 def main():
     
@@ -67,11 +72,7 @@ def main():
             src_addr_list_names = get_item_names(addr_lists, all_addr_lists_id, src_addr_ids)
 
             src_addr_dict = addr_lists.get_address_list_dict(src_addr_ids, addr_lists, src_addr_list_names)
-            if src_addr_dict:
-                for i in src_addr_dict:
-                    print(f'{i.get('name')}: {i.get('value')} ')
-            else:
-                print('any')
+            addr_output(src_addr_dict)
             
             dst_zone_ids = rule.get('dst_zones', [])
             dst_zone_names = get_item_names(zones, all_zones_id, dst_zone_ids)
@@ -82,11 +83,7 @@ def main():
             dst_addr_list_names = get_item_names(addr_lists, all_addr_lists_id, dst_addr_ids)
             
             dst_addr_dict = addr_lists.get_address_list_dict(dst_addr_ids, addr_lists, dst_addr_list_names)
-            if dst_addr_dict:
-                for i in dst_addr_dict:
-                    print(f'{i.get('name')}: {i.get('value')} ')
-            else:
-                print('any')
+            addr_output(dst_addr_dict)
         
         # print(zones.get_by_key(all_zones_id, 9))
         # print(zones.get_by_key(all_zones_name, 'gDMZ VPN'))
