@@ -41,7 +41,7 @@ class AddressList:
                         addr_list_values.append(item_value)
         except xmlrpc.client.Fault as e:
             if e.faultCode == 2010 and 'List content is not available' in e.faultString:
-                return "Нельзя просмотреть список"
+                return 'List content is not available'
             else:
                 raise
         addr_list_values = ', '.join(addr_list_values)
