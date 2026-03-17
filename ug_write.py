@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-'''Чтение и правил межсетевого экрана из файла и загрузка их в NGFW Usergate'''
+'''Чтение правил межсетевого экрана из файла и загрузка их в NGFW Usergate'''
 
 import os
 import xlwt
