@@ -61,8 +61,18 @@ class AddressList:
         ]
         return src_ip_dict
     
-    def create_list(self, new_list):
-        result = self.client.server.v2.nlists.add(self.client.auth_token, new_list)
+    def create_list(self, addr_list_dict, new_list):
+        '''Тут или создаем список ip, и возвращаем его id, или, если такой список уже есть,
+           определяем и возвращаем его id'''
+        
+        try:
+            result = self.client.server.v2.nlists.add(self.client.auth_token, new_list)
+        except xmlrpc.client.Fault as e:
+            if e.faultCode == 409 and 'Object with the same name already exists' in e.faultString:
+                result = self.get_by_key(addr_list_dict, new_list)
+            else:
+                # Другая ошибка - пробрасываем дальше
+                raise
         return result
         
     def create_list_item(self, list_id, new_item):

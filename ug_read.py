@@ -1,4 +1,5 @@
 #!/usr/bin/env python3
+'''Чтение и выгрузка правил межсетевого экрана с NGFW Usergate'''
 
 import os
 import xlwt
@@ -60,7 +61,7 @@ def main():
         
         all_rules = rules.get_all_rules()
         
-        #====================== Excel part =========================
+        # ====================== Excel part =========================
         wb = xlwt.Workbook()
         bold = xlwt.easyxf(
             'font: bold 1, height 240;'
@@ -109,9 +110,9 @@ def main():
         # Нужно это для того, чтобы получить нужный объект или по id, или по имени
         
         all_zones_id = zones.get_all_zones('id') # Кэш зон для поиска по id
-        all_zones_name = zones.get_all_zones('name') # Кэш зон для поиска по name
+        # all_zones_name = zones.get_all_zones('name') # Кэш зон для поиска по name
         all_addr_lists_id = addr_lists.get_all_address_lists('id') # Кэш списков адресов для поиска по id
-        all_addr_lists_name = addr_lists.get_all_address_lists('name') # Кэш списков адресов для поиска по name
+        # all_addr_lists_name = addr_lists.get_all_address_lists('name') # Кэш списков адресов для поиска по name
         
         for rule in all_rules.get('items', []):
             print('=====================RULE===================')

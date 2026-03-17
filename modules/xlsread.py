@@ -12,7 +12,7 @@ class ExcelToJson:
     def __init__(self, excel_file):
         self.excel_file = excel_file
     
-    def convert_values(self):
+    def convert_values(self, return_json=False):
         # Чтение Excel файла
         df = pd.read_excel(self.excel_file)
         
@@ -30,7 +30,7 @@ class ExcelToJson:
         
         for (position, name), group in df.groupby(rule_identifiers):
             rule = {
-                'position': position,
+                'position': int(position),
                 'name': name,
             }
             
@@ -128,7 +128,12 @@ class ExcelToJson:
             
             rules.append(rule)
         
-        return json.dumps(rules, ensure_ascii=False, indent=2)
+        if return_json:
+        # Возвращаем строку JSON (для сохранения в файл)
+            return json.dumps(rules, ensure_ascii=False, indent=2)
+        else:
+            # Возвращаем Python-объект (для работы в коде)
+            return rules
             
 
 def main():
