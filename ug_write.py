@@ -7,6 +7,7 @@ import xmlrpc.client
 from dotenv import load_dotenv
 from modules.ug_client import UsergateClient
 from modules.xlsread import ExcelToJson
+from modules.fw_rules import FirewallRules
 from modules.zones import Zones
 from modules.addr_list import AddressList
 from modules.services import Services
@@ -26,6 +27,7 @@ def zone_add(zones, item, zone_list, newrule, all_zones_name):
 
 def addr_list_add(addr_lists, item, addr_list, newrule, all_addr_lists_name):
     '''addr_list - src_ips or dst_ips'''
+    create_items = False
     for ip_list in item.get(addr_list):
         ip_list_name = ip_list.get('name')
         new_ip_list = ['list_id']
@@ -39,7 +41,8 @@ def addr_list_add(addr_lists, item, addr_list, newrule, all_addr_lists_name):
             new_ip_list.append(addr_lists.create_list(all_addr_lists_name, new_ip_list_item))
             newrule[addr_list].append(new_ip_list)
             all_addr_lists_name = addr_lists.get_all_address_lists('name')
-    return newrule, all_addr_lists_name
+            create_items = True
+    return newrule, all_addr_lists_name, create_items
 
 
 def main():
@@ -56,29 +59,71 @@ def main():
         password=UGPASS
     ) as client:
     
-        e2j = ExcelToJson('test_zone.xls') # Input file
+        e2j = ExcelToJson('Usergate35.xls') # Input file
+        rules = FirewallRules(client)
         zones = Zones(client)
         addr_lists = AddressList(client)
+        services = Services(client)
         
         all_zones_name = zones.get_all_zones('name') # Кэш зон для поиска по name
         all_addr_lists_name = addr_lists.get_all_address_lists('name') # Кэш списков адресов для поиска по name
+        all_services = services.get_all_services('name')
         
         newrules = e2j.convert_values()
         for item in newrules:
             newrule = {}
             newrule['name'] = item.get('name')
-            newrule['action'] = item.get('action')
+            newrule['action'] = item.get('action')[0]
             newrule['src_zones'] = []
             newrule['dst_zones'] = []
             newrule['src_ips'] = []
             newrule['dst_ips'] = []
+            newrule['services'] = []
             
             for zone_list in ['src_zones', 'dst_zones']:
                 newrule, all_zones_name = zone_add(zones, item, zone_list, newrule, all_zones_name)
             
             for addr_list in ['src_ips', 'dst_ips']:
-                newrule, all_addr_lists_name = addr_list_add(addr_lists, item, addr_list, newrule, all_addr_lists_name)
-
+                newrule, all_addr_lists_name, create_items = addr_list_add(addr_lists, item, addr_list, newrule, all_addr_lists_name)
+                if create_items == True:
+                    for ip_list in item[addr_list]:
+                        ip_list_name = ip_list.get('name')
+                        ip_list_id = all_addr_lists_name.get(ip_list_name).get('id')
+                        new_list_value = {'value': ', '.join(ip_list.get('items'))}
+                        addr_lists.create_list_item(ip_list_id, new_list_value)
+            
+            if item.get('enabled')[0] == 'enabled':
+                newrule['enabled'] = True
+            else:
+                newrule['enabled'] = False
+            
+            for service_list in item['services']:
+                service_list_name = service_list.get('name')
+                new_service_list = ['service']
+                if service_list == []:
+                    newrule['services'] = []
+                elif all_services.get(service_list_name):
+                    service_id = all_services.get(service_list_name).get('id')
+                    new_service_list.append(service_id)
+                    newrule['services'].append(new_service_list)
+                else:
+                    new_protocol_list = []
+                    item_protocol_list = item.get('services')
+                    for protocol_list in item_protocol_list:
+                        new_protocol_list_name = protocol_list.get('name')
+                        new_protocol_list_item = {}
+                        for item in protocol_list.get('protocols'):
+                            proto_list = item.split(':')
+                            new_protocol_list_item['proto'] = proto_list[0]
+                            new_protocol_list_item['port'] = proto_list[1].strip()
+                            new_protocol_list.append(new_protocol_list_item)
+                        new_service_item = {'name': new_protocol_list_name, 'protocols': new_protocol_list}
+                        services.create_service(all_services, new_service_item)
+                        all_services = services.get_all_services('name')
+                        # print(new_service_item)
+                    
+                
+            rules.create_rule(newrule)
             print(newrule)
 
 if __name__ == '__main__':

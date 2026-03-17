@@ -76,4 +76,13 @@ class AddressList:
         return result
         
     def create_list_item(self, list_id, new_item):
-        self.client.server.v2.nlists.list.add(self.client.auth_token, list_id, new_item)
+        try:
+            self.client.server.v2.nlists.list.add(self.client.auth_token, list_id, new_item)
+        except xmlrpc.client.Fault as e:
+            if e.faultCode == 2001 and 'Item duplicate' in e.faultString:
+                print('Item already exists')
+                pass
+            else:
+                # Другая ошибка - пробрасываем дальше
+                raise
+        
