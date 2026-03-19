@@ -59,8 +59,7 @@ def main():
         addr_lists = AddressList(client)
         services = Services(client)
         
-        all_rules = rules.get_all_rules()
-        
+               
         # ====================== Excel part =========================
         wb = xlwt.Workbook()
         bold = xlwt.easyxf(
@@ -109,10 +108,9 @@ def main():
         # В зависимости от ключа .get_all_zones возвращает нам кэш словарей, где ключ или id, или name
         # Нужно это для того, чтобы получить нужный объект или по id, или по имени
         
+        all_rules = rules.get_all_rules()
         all_zones_id = zones.get_all_zones('id') # Кэш зон для поиска по id
-        # all_zones_name = zones.get_all_zones('name') # Кэш зон для поиска по name
         all_addr_lists_id = addr_lists.get_all_address_lists('id') # Кэш списков адресов для поиска по id
-        # all_addr_lists_name = addr_lists.get_all_address_lists('name') # Кэш списков адресов для поиска по name
         
         for rule in all_rules.get('items', []):
             print('=====================RULE===================')
@@ -172,10 +170,6 @@ def main():
             excel_counter = max(src_excel_counter, dst_excel_counter, ports_excel_counter)
             excel_counter += 1
     wb.save('Usergate35.xls')
-        # print(zones.get_by_key(all_zones_id, 9))
-        # print(zones.get_by_key(all_zones_name, 'gDMZ VPN'))
-        # print(zones.create_zone(all_zones_name, 'gDMZ VPN'))
-        
 
 if __name__ == '__main__':
     main()

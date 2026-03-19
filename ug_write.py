@@ -79,6 +79,8 @@ def main():
             newrule['src_ips'] = []
             newrule['dst_ips'] = []
             newrule['services'] = []
+            newrule['log'] = True
+            newrule['log_session_start'] = True
             
             for zone_list in ['src_zones', 'dst_zones']:
                 newrule, all_zones_name = zone_add(zones, item, zone_list, newrule, all_zones_name)

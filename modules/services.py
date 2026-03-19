@@ -16,7 +16,7 @@ class Services:
     
     def get_service_info(self, service_list):
         service_info_list = []
-        services_dict = self.get_all_services()
+        services_dict = self.get_all_services('id')
         for service_ref in service_list:
             service_info = services_dict.get(service_ref[1])
             service_info_list.append(service_info)
