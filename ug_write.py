@@ -31,7 +31,7 @@ def addr_list_add(addr_lists, item, addr_list, newrule, all_addr_lists_name):
     for ip_list in item.get(addr_list):
         ip_list_name = ip_list.get('name')
         new_ip_list = ['list_id']
-        if ip_list_name == 'any':
+        if ip_list_name == 'any' or ip_list_name == []:
             newrule[addr_list] = []
         elif all_addr_lists_name.get(ip_list_name):
             new_ip_list.append(addr_lists.get_by_key(all_addr_lists_name, ip_list_name))
@@ -59,7 +59,7 @@ def main():
         password=UGPASS
     ) as client:
     
-        e2j = ExcelToJson('Usergate35.xls') # Input file
+        e2j = ExcelToJson('all_staff3_test.xls') # Input file
         rules = FirewallRules(client)
         zones = Zones(client)
         addr_lists = AddressList(client)
@@ -91,8 +91,10 @@ def main():
                     for ip_list in item[addr_list]:
                         ip_list_name = ip_list.get('name')
                         ip_list_id = all_addr_lists_name.get(ip_list_name).get('id')
-                        new_list_value = {'value': ', '.join(ip_list.get('items'))}
-                        addr_lists.create_list_item(ip_list_id, new_list_value)
+                        new_values = ip_list.get('items')
+                        for value in new_values:
+                            new_list_value = {'value': value}
+                            addr_lists.create_list_item(ip_list_id, new_list_value)
             
             if item.get('enabled')[0] == 'enabled':
                 newrule['enabled'] = True
