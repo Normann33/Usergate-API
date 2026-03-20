@@ -11,7 +11,7 @@ class AddressList:
 
     def get_all_address_lists(self, addr_list_key):
         ''' addr_list_key должен быть 'id' или 'name' '''
-        address_lists = self.client.server.v2.nlists.list(self.client.auth_token, 'network', 0, 1000, {})
+        address_lists = self.client.server.v2.nlists.list(self.client.auth_token, 'network', 0, 10000, {})
         address_lists_dict = {item[addr_list_key]: item for item in address_lists.get('items', [])}
         return address_lists_dict
     
@@ -24,12 +24,15 @@ class AddressList:
                 
                 
     def get_by_key(self, addr_list_dict, addr_list_key):
-        if type(addr_list_key) == int:
-            addr_list_name = addr_list_dict.get(addr_list_key, {}).get('name')
-            return addr_list_name
-        else:
-            addr_list_id = addr_list_dict.get(addr_list_key, {}).get('id')
-            return addr_list_id
+        try:
+            if type(addr_list_key) == int:
+                addr_list_name = addr_list_dict.get(addr_list_key, {}).get('name')
+                return addr_list_name
+            else:
+                addr_list_id = addr_list_dict.get(addr_list_key).get('id')
+                return addr_list_id
+        except AttributeError as e:
+            print(e, addr_list_key)
         
     
     def get_addr_list_items(self, addr_list_id):
@@ -69,7 +72,7 @@ class AddressList:
             result = self.client.server.v2.nlists.add(self.client.auth_token, new_list)
         except xmlrpc.client.Fault as e:
             if e.faultCode == 409 and 'Object with the same name already exists' in e.faultString:
-                result = self.get_by_key(addr_list_dict, new_list)
+                result = self.get_by_key(addr_list_dict, new_list.get('name'))
             else:
                 # Другая ошибка - пробрасываем дальше
                 raise

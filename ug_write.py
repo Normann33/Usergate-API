@@ -59,7 +59,7 @@ def main():
         password=UGPASS
     ) as client:
     
-        e2j = ExcelToJson('all_staff3_test.xls') # Input file
+        e2j = ExcelToJson('all_staff3_normalized_2.xls') # Input file
         rules = FirewallRules(client)
         zones = Zones(client)
         addr_lists = AddressList(client)
