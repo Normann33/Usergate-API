@@ -3,6 +3,7 @@
 
 import os
 import xlwt
+import keyring
 import xmlrpc.client
 from dotenv import load_dotenv
 from modules.ug_client import UsergateClient
@@ -50,7 +51,8 @@ def main():
     load_dotenv()
 
     UGUSER = os.getenv('TESTUGUSER')
-    UGPASS = os.getenv('TESTUGPASS')
+    # UGPASS = os.getenv('TESTUGPASS')
+    UGPASS = keyring.get_password('usergate-api', UGUSER)
     UGSERVER = os.getenv('TESTUGSERVER')
     
     with UsergateClient(
