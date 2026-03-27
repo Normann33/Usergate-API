@@ -3,6 +3,7 @@
 
 import os
 import xlwt
+import keyring
 import xmlrpc.client
 from dotenv import load_dotenv
 from modules.ug_client import UsergateClient
@@ -46,7 +47,7 @@ def main():
     # UGSERVER = os.getenv('TESTUGSERVER')
     
     UGUSER = os.getenv('UGUSER')
-    UGPASS = os.getenv('UGPASS')
+    UGPASS = keyring.get_password('usergate-api', 'apimaster')
     UGSERVER = os.getenv('UGSERVER')
     
     with UsergateClient(
@@ -169,7 +170,7 @@ def main():
                         ports_excel_counter += 1
             excel_counter = max(src_excel_counter, dst_excel_counter, ports_excel_counter)
             excel_counter += 1
-    wb.save('Usergate35.xls')
+    wb.save('Usergate35-2.xls')
 
 if __name__ == '__main__':
     main()
