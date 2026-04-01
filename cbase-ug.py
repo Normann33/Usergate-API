@@ -103,6 +103,9 @@ def main():
             cur.execute("SELECT \"UserName\", ip, iplist FROM vpn_clients WHERE \"UserName\" = %s", (vpnlogin,))
             db_data = cur.fetchone()
         
+        db_ip_list = db_data.get('iplist').split(',').strip()
+        print(db_ip_list)
+        
         item = {
             'name': vpnlogin,
             'src_zones': ["gDMZ VPN"],
@@ -113,6 +116,7 @@ def main():
             }
         
         print(item)
+        exit()
         
         newrule = {}
         newrule['name'] = item.get('name') # Тут получаем VPN логин из аргумента командной строки

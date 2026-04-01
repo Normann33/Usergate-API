@@ -2,8 +2,6 @@
 
 KEYPATH = ''
 UGUSER = ''
-UGPASS = ''
 UGSERVER = ''
 DBUSER = ''
-DBPASSWORD = ''
 DBNAME = ''
