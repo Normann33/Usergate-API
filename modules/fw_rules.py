@@ -15,7 +15,8 @@ class FirewallRules:
     def get_all_rules_dict(self, rule_key):
         ''' rule_key должен быть 'id' или 'name' '''
         rules_list = self.client.server.v1.firewall.rules.list(self.client.auth_token, 0, 100, {})
-        rules_dict = {z[rule_key]: z for z in rules_list}
+        rules_dict = {item[rule_key]: item for item in rules_list.get('items', [])}
+        # rules_dict = {z[rule_key]: z for z in rules_list}
         return rules_dict
     
     def create_rule(self, new_rule):
