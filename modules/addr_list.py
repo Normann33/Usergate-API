@@ -101,6 +101,7 @@ class AddressList:
         create_items = False
         for ip_list in rule_item.get(addr_list_type):
             ip_list_name = ip_list.get('name')
+            new_addr_list = []
             new_ip_list = ['list_id']
             if ip_list_name == 'any' or ip_list_name == []:
                 new_addr_list = []
