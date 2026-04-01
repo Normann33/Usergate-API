@@ -103,7 +103,7 @@ def main():
             cur.execute("SELECT \"UserName\", ip, iplist FROM vpn_clients WHERE \"UserName\" = %s", (vpnlogin,))
             db_data = cur.fetchone()
         
-        db_ip_list = db_data.get('iplist').split(',').strip()
+        db_ip_list = db_data.get('iplist').split(',')
         print(db_ip_list)
         
         item = {
