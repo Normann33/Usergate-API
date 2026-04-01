@@ -173,7 +173,7 @@ def main():
         else:
             db_iplist_name = vpnlogin
         
-        item = {
+        rule_item = {
             'name': vpnlogin,
             'src_zones': ['gDMZ VPN'],
             'dst_zones': ['Trusted VPN'],
@@ -182,12 +182,12 @@ def main():
             'services': [{'name': 'RDP', 'protocols': ['tcp: 3389']}, {'name': 'SSH', 'protocols': ['tcp: 22']}] # Пока хардкодим RDP и SSH
             }
         
-        print(f'Item: {item}')
+        print(f'Item: {rule_item}')
         
         if args.create:
         
             newrule = {}
-            newrule['name'] = item.get('name') # Тут получаем VPN логин из аргумента командной строки
+            newrule['name'] = rule_item.get('name') # Тут получаем VPN логин из аргумента командной строки
             newrule['action'] = 'accept'
             newrule['enabled'] = True
             newrule['src_zones'] = []
@@ -199,12 +199,13 @@ def main():
             newrule['log_session_start'] = True
             
             for zone_list in ['src_zones', 'dst_zones']:
-                newrule, all_zones_name = Zones.zone_add(zone_manager, item, zone_list, newrule, all_zones_name)
+                newrule, all_zones_name = Zones.zone_add(zone_manager, rule_item, zone_list, newrule, all_zones_name)
             
             for addr_list_type in ['src_ips', 'dst_ips']:
-                newrule, all_addr_lists_name, create_items = AddressList.addr_list_add(addr_list_manager, item, addr_list_type, newrule, all_addr_lists_name)
+                new_addr_list, all_addr_lists_name, create_items = AddressList.addr_list_add(addr_list_manager, rule_item, addr_list_type, all_addr_lists_name)
+                newrule[addr_list_type] = new_addr_list
                 if create_items == True:
-                    for ip_list in item[addr_list_type]:
+                    for ip_list in rule_item[addr_list_type]:
                         ip_list_name = ip_list.get('name')
                         ip_list_id = all_addr_lists_name.get(ip_list_name).get('id')
                         new_values = ip_list.get('items')
@@ -212,7 +213,7 @@ def main():
                             new_list_value = {'value': value}
                             addr_list_manager.create_list_item(ip_list_id, new_list_value)
             
-            for service_list in item['services']:
+            for service_list in rule_item['services']:
                 service_list_name = service_list.get('name')
                 new_service_list = ['service']
                 if service_list == []:
@@ -223,12 +224,12 @@ def main():
                     newrule['services'].append(new_service_list)
                 else:
                     new_protocol_list = []
-                    item_protocol_list = item.get('services')
+                    item_protocol_list = rule_item.get('services')
                     for protocol_list in item_protocol_list:
                         new_protocol_list_name = protocol_list.get('name')
                         new_protocol_list_item = {}
-                        for item in protocol_list.get('protocols'):
-                            proto_list = item.split(':')
+                        for rule_item in protocol_list.get('protocols'):
+                            proto_list = rule_item.split(':')
                             new_protocol_list_item['proto'] = proto_list[0]
                             new_protocol_list_item['port'] = proto_list[1].strip()
                             new_protocol_list.append(new_protocol_list_item)
@@ -249,10 +250,9 @@ def main():
             all_addr_lists_name = addr_list_manager.get_all_address_lists('name')
             
             addr_list_type = 'dst_ips'
-            newrule = {}
-            newrule, all_addr_lists_name, create_items = AddressList.addr_list_add(addr_list_manager, item, addr_list_type, newrule, all_addr_lists_name)
+            new_addr_list, all_addr_lists_name, create_items = AddressList.addr_list_add(addr_list_manager, rule_item, addr_list_type, all_addr_lists_name)
             if create_items == True:
-                for ip_list in item[addr_list_type]:
+                for ip_list in rule_item[addr_list_type]:
                     ip_list_name = ip_list.get('name')
                     ip_list_id = all_addr_lists_name.get(ip_list_name).get('id')
                     new_values = ip_list.get('items')

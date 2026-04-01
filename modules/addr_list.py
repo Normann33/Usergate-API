@@ -96,21 +96,21 @@ class AddressList:
             print(e)
     
     @staticmethod
-    def addr_list_add(addr_lists, item, addr_list, newrule, all_addr_lists_name):
+    def addr_list_add(addr_list_manager, rule_item, addr_list_type, all_addr_lists_name):
         '''addr_list - src_ips or dst_ips'''
         create_items = False
-        for ip_list in item.get(addr_list):
+        for ip_list in rule_item.get(addr_list_type):
             ip_list_name = ip_list.get('name')
             new_ip_list = ['list_id']
             if ip_list_name == 'any' or ip_list_name == []:
-                newrule[addr_list] = []
+                new_addr_list = []
             elif all_addr_lists_name.get(ip_list_name):
-                new_ip_list.append(addr_lists.get_by_key(all_addr_lists_name, ip_list_name))
-                newrule[addr_list].append(new_ip_list)
+                new_ip_list.append(addr_list_manager.get_by_key(all_addr_lists_name, ip_list_name))
+                new_addr_list.append(new_ip_list)
             else:
                 new_ip_list_item = {'type': 'network', 'name': ip_list_name}
-                new_ip_list.append(addr_lists.create_list(all_addr_lists_name, new_ip_list_item))
-                newrule[addr_list].append(new_ip_list)
-                all_addr_lists_name = addr_lists.get_all_address_lists('name')
+                new_ip_list.append(addr_list_manager.create_list(all_addr_lists_name, new_ip_list_item))
+                new_addr_list.append(new_ip_list)
+                all_addr_lists_name = addr_list_manager.get_all_address_lists('name')
                 create_items = True
-        return newrule, all_addr_lists_name, create_items
+        return new_addr_list, all_addr_lists_name, create_items

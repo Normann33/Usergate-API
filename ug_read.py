@@ -56,10 +56,10 @@ def main():
         username=UGUSER,
         password=UGPASS
     ) as client:
-        rules = FirewallRules(client)
-        zones = Zones(client)
-        addr_lists = AddressList(client)
-        services = Services(client)
+        rule_manager = FirewallRules(client)
+        zone_manager = Zones(client)
+        addr_list_manager = AddressList(client)
+        services_manager = Services(client)
         
                
         # ====================== Excel part =========================
@@ -110,9 +110,9 @@ def main():
         # В зависимости от ключа .get_all_zones возвращает нам кэш словарей, где ключ или id, или name
         # Нужно это для того, чтобы получить нужный объект или по id, или по имени
         
-        all_rules = rules.get_all_rules()
-        all_zones_id = zones.get_all_zones('id') # Кэш зон для поиска по id
-        all_addr_lists_id = addr_lists.get_all_address_lists('id') # Кэш списков адресов для поиска по id
+        all_rules = rule_manager.get_all_rules()
+        all_zones_id = zone_manager.get_all_zones('id') # Кэш зон для поиска по id
+        all_addr_lists_id = addr_list_manager.get_all_address_lists('id') # Кэш списков адресов для поиска по id
         
         for rule in all_rules.get('items', []):
             print('=====================RULE===================')
@@ -134,29 +134,29 @@ def main():
             sheet1.write(excel_counter, 4, rule_action, text_style)
             
             src_zone_ids = rule.get('src_zones', [])
-            src_zone_names = get_item_names(zones, all_zones_id, src_zone_ids)
+            src_zone_names = get_item_names(zone_manager, all_zones_id, src_zone_ids)
             sheet1.write(excel_counter, 5, ', '.join(src_zone_names), text_style)
             print(f'Зоны источника {', '.join(src_zone_names)}')
             
             src_addr_list = rule.get('src_ips')
-            src_addr_ids = addr_lists.get_addr_list_id(src_addr_list)
-            src_addr_list_names = get_item_names(addr_lists, all_addr_lists_id, src_addr_ids)
-            src_addr_dict = addr_lists.get_address_list_dict(src_addr_ids, addr_lists, src_addr_list_names)
+            src_addr_ids = addr_list_manager.get_addr_list_id(src_addr_list)
+            src_addr_list_names = get_item_names(addr_list_manager, all_addr_lists_id, src_addr_ids)
+            src_addr_dict = addr_list_manager.get_address_list_dict(src_addr_ids, addr_list_manager, src_addr_list_names)
             src_excel_counter = addr_output(src_addr_dict, sheet1, text_style, excel_counter, 6)
             
             dst_zone_ids = rule.get('dst_zones', [])
-            dst_zone_names = get_item_names(zones, all_zones_id, dst_zone_ids)
+            dst_zone_names = get_item_names(zone_manager, all_zones_id, dst_zone_ids)
             sheet1.write(excel_counter, 8, ', '.join(dst_zone_names), text_style)
             print(f'Зоны назначения {', '.join(dst_zone_names)}')
             
             dst_addr_list = rule.get('dst_ips')
-            dst_addr_ids = addr_lists.get_addr_list_id(dst_addr_list)
-            dst_addr_list_names = get_item_names(addr_lists, all_addr_lists_id, dst_addr_ids)
-            dst_addr_dict = addr_lists.get_address_list_dict(dst_addr_ids, addr_lists, dst_addr_list_names)
+            dst_addr_ids = addr_list_manager.get_addr_list_id(dst_addr_list)
+            dst_addr_list_names = get_item_names(addr_list_manager, all_addr_lists_id, dst_addr_ids)
+            dst_addr_dict = addr_list_manager.get_address_list_dict(dst_addr_ids, addr_list_manager, dst_addr_list_names)
             dst_excel_counter = addr_output(dst_addr_dict, sheet1, text_style, excel_counter, 9)
             
             service_ids = rule.get('services')
-            service_info = services.get_service_info(service_ids)
+            service_info = services_manager.get_service_info(service_ids)
             ports_excel_counter = excel_counter
             if service_info:
                 for item in service_info:
