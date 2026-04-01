@@ -249,6 +249,7 @@ def main():
             all_addr_lists_name = addr_list_manager.get_all_address_lists('name')
             
             addr_list_type = 'dst_ips'
+            newrule = {}
             newrule, all_addr_lists_name, create_items = AddressList.addr_list_add(addr_list_manager, item, addr_list_type, newrule, all_addr_lists_name)
             if create_items == True:
                 for ip_list in item[addr_list_type]:

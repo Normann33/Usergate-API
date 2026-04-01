@@ -96,7 +96,7 @@ class AddressList:
             print(e)
     
     @staticmethod
-    def addr_list_add(addr_lists, item, addr_list, newrule={}, all_addr_lists_name={}):
+    def addr_list_add(addr_lists, item, addr_list, newrule, all_addr_lists_name):
         '''addr_list - src_ips or dst_ips'''
         create_items = False
         for ip_list in item.get(addr_list):
