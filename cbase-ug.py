@@ -243,8 +243,8 @@ def main():
         
         elif args.update:
             current_rule = all_rules.get(vpnlogin)
-            current_addr_list = current_rule.get('dst_ips')
-            print(current_addr_list)
+            current_addr_list_id = current_rule.get('dst_ips')[1]
+            print(current_addr_list_id)
         
         elif args.delete:
             pass
