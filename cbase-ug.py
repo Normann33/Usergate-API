@@ -159,9 +159,6 @@ def main():
         all_addr_lists_name = addr_lists.get_all_address_lists('name') # Кэш списков адресов для поиска по name
         all_services = services.get_all_services('name')
         all_rules = rules.get_all_rules_dict('name')
-        print(all_rules.get('a.kuznetsov'))
-        exit()
-        
         
         with get_db_cursor('localhost', 5432, DBNAME, DBUSER, DBPASSWORD) as cur:
             cur.execute("SELECT \"UserName\", ip, iplist FROM vpn_clients WHERE \"UserName\" = %s", (vpnlogin,))
@@ -246,7 +243,9 @@ def main():
             print(newrule)
         
         elif args.update:
-            pass
+            current_rule = all_rules.get(vpnlogin)
+            current_addr_list = current_rule.get('dst_ips')
+            print(current_addr_list)
         
         elif args.delete:
             pass
