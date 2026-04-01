@@ -113,6 +113,12 @@ def parse_arguments():
         action='store_true',
         help='Деактивировать правило доступа'
     )
+    
+    action_group.add_argument(
+        '--activate',
+        action='store_true',
+        help='Активировать правило доступа'
+    )
             
     return parser.parse_args()
 
@@ -152,6 +158,10 @@ def main():
         all_zones_name = zones.get_all_zones('name') # Кэш зон для поиска по name
         all_addr_lists_name = addr_lists.get_all_address_lists('name') # Кэш списков адресов для поиска по name
         all_services = services.get_all_services('name')
+        all_rules = rules.get_all_rules_dict('name')
+        print(all_rules.get('a.kuznetsov'))
+        exit()
+        
         
         with get_db_cursor('localhost', 5432, DBNAME, DBUSER, DBPASSWORD) as cur:
             cur.execute("SELECT \"UserName\", ip, iplist FROM vpn_clients WHERE \"UserName\" = %s", (vpnlogin,))
@@ -178,59 +188,60 @@ def main():
         
         print(item)
         
-        
-        newrule = {}
-        newrule['name'] = item.get('name') # Тут получаем VPN логин из аргумента командной строки
-        newrule['action'] = 'accept'
-        newrule['enabled'] = True
-        newrule['src_zones'] = []
-        newrule['dst_zones'] = []
-        newrule['src_ips'] = [] # Получаем значение из базы CBase
-        newrule['dst_ips'] = [] # Получаем значение из базы CBase
-        newrule['services'] = []
-        newrule['log'] = True
-        newrule['log_session_start'] = True
-        
-        for zone_list in ['src_zones', 'dst_zones']:
-            newrule, all_zones_name = Zones.zone_add(zones, item, zone_list, newrule, all_zones_name)
-        
-        for addr_list in ['src_ips', 'dst_ips']:
-            newrule, all_addr_lists_name, create_items = AddressList.addr_list_add(addr_lists, item, addr_list, newrule, all_addr_lists_name)
-            if create_items == True:
-                for ip_list in item[addr_list]:
-                    ip_list_name = ip_list.get('name')
-                    ip_list_id = all_addr_lists_name.get(ip_list_name).get('id')
-                    new_values = ip_list.get('items')
-                    for value in new_values:
-                        new_list_value = {'value': value}
-                        addr_lists.create_list_item(ip_list_id, new_list_value)
-        
-        for service_list in item['services']:
-            service_list_name = service_list.get('name')
-            new_service_list = ['service']
-            if service_list == []:
-                newrule['services'] = []
-            elif all_services.get(service_list_name):
-                service_id = all_services.get(service_list_name).get('id')
-                new_service_list.append(service_id)
-                newrule['services'].append(new_service_list)
-            else:
-                new_protocol_list = []
-                item_protocol_list = item.get('services')
-                for protocol_list in item_protocol_list:
-                    new_protocol_list_name = protocol_list.get('name')
-                    new_protocol_list_item = {}
-                    for item in protocol_list.get('protocols'):
-                        proto_list = item.split(':')
-                        new_protocol_list_item['proto'] = proto_list[0]
-                        new_protocol_list_item['port'] = proto_list[1].strip()
-                        new_protocol_list.append(new_protocol_list_item)
-                    new_service_item = {'name': new_protocol_list_name, 'protocols': new_protocol_list}
-                    services.create_service(all_services, new_service_item)
-                    all_services = services.get_all_services('name')
-                    # print(new_service_item)
-                    
         if args.create:
+        
+            newrule = {}
+            newrule['name'] = item.get('name') # Тут получаем VPN логин из аргумента командной строки
+            newrule['action'] = 'accept'
+            newrule['enabled'] = True
+            newrule['src_zones'] = []
+            newrule['dst_zones'] = []
+            newrule['src_ips'] = [] # Получаем значение из базы CBase
+            newrule['dst_ips'] = [] # Получаем значение из базы CBase
+            newrule['services'] = []
+            newrule['log'] = True
+            newrule['log_session_start'] = True
+            
+            for zone_list in ['src_zones', 'dst_zones']:
+                newrule, all_zones_name = Zones.zone_add(zones, item, zone_list, newrule, all_zones_name)
+            
+            for addr_list in ['src_ips', 'dst_ips']:
+                newrule, all_addr_lists_name, create_items = AddressList.addr_list_add(addr_lists, item, addr_list, newrule, all_addr_lists_name)
+                if create_items == True:
+                    for ip_list in item[addr_list]:
+                        ip_list_name = ip_list.get('name')
+                        ip_list_id = all_addr_lists_name.get(ip_list_name).get('id')
+                        new_values = ip_list.get('items')
+                        for value in new_values:
+                            new_list_value = {'value': value}
+                            addr_lists.create_list_item(ip_list_id, new_list_value)
+            
+            for service_list in item['services']:
+                service_list_name = service_list.get('name')
+                new_service_list = ['service']
+                if service_list == []:
+                    newrule['services'] = []
+                elif all_services.get(service_list_name):
+                    service_id = all_services.get(service_list_name).get('id')
+                    new_service_list.append(service_id)
+                    newrule['services'].append(new_service_list)
+                else:
+                    new_protocol_list = []
+                    item_protocol_list = item.get('services')
+                    for protocol_list in item_protocol_list:
+                        new_protocol_list_name = protocol_list.get('name')
+                        new_protocol_list_item = {}
+                        for item in protocol_list.get('protocols'):
+                            proto_list = item.split(':')
+                            new_protocol_list_item['proto'] = proto_list[0]
+                            new_protocol_list_item['port'] = proto_list[1].strip()
+                            new_protocol_list.append(new_protocol_list_item)
+                        new_service_item = {'name': new_protocol_list_name, 'protocols': new_protocol_list}
+                        services.create_service(all_services, new_service_item)
+                        all_services = services.get_all_services('name')
+                        # print(new_service_item)
+                        
+        
             rules.create_rule(newrule)
             print(newrule)
         
@@ -241,6 +252,9 @@ def main():
             pass
         
         elif args.deactivate:
+            pass
+        
+        elif args.activate:
             pass
 
 if __name__ == '__main__':
