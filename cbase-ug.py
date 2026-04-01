@@ -128,7 +128,7 @@ def main():
     kr = CryptFileKeyring()
     load_dotenv()
 
-    KEYPATH = os.getenv("KEYPATH")
+    KEYPATH = os.getenv('KEYPATH')
     
     with open(KEYPATH + '/keyring.pass', 'r') as f:
         kr.keyring_key = f.read().strip()
@@ -141,7 +141,6 @@ def main():
     DBPASSWORD = keyring.get_password('cbase-db', DBUSER)
     DBNAME = os.getenv('DBNAME')
     
-    # vpnlogin = sys.argv[1]
     vpnlogin = args.login
     
     with UsergateClient(
@@ -176,14 +175,14 @@ def main():
         
         item = {
             'name': vpnlogin,
-            'src_zones': ["gDMZ VPN"],
-            "dst_zones": ["Trusted VPN"],
-            "src_ips": [{"name": db_data.get('ip'),"items": db_data.get('ip')}], # Тут адрес который выдается пользователю при подключении по впн, читаем из базы
-            "dst_ips": [{"name": db_iplist_name,"items": db_iplist}], # Тут читаем разрешенные имена из базы, если адрес один - именуем список по адресу, если несколько - по впн логину
-            "services": [{"name": "RDP", "protocols": ["tcp: 3389"]}, {"name": "SSH", "protocols": ["tcp: 22"]}] # Пока хардкодим RDP и SSH
+            'src_zones': ['gDMZ VPN'],
+            'dst_zones': ['Trusted VPN'],
+            'src_ips': [{'name': db_data.get('ip'), 'items': db_data.get('ip')}], # Тут адрес который выдается пользователю при подключении по впн, читаем из базы
+            'dst_ips': [{'name': db_iplist_name, 'items': db_iplist}], # Тут читаем разрешенные имена из базы, если адрес один - именуем список по адресу, если несколько - по впн логину
+            'services': [{'name': 'RDP', 'protocols': ['tcp: 3389']}, {'name': 'SSH', 'protocols': ['tcp: 22']}] # Пока хардкодим RDP и SSH
             }
         
-        print(item)
+        print(f'Item: {item}')
         
         if args.create:
         
