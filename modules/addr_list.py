@@ -89,8 +89,14 @@ class AddressList:
                 # Другая ошибка - пробрасываем дальше
                 raise
     
+    def delete_list(self, list_id):
+        try:
+            self.client.server.v2.nlists.delete(self.client.auth_token, list_id)
+        except Exception as e:
+            print(e)
+    
     @staticmethod
-    def addr_list_add(addr_lists, item, addr_list, newrule, all_addr_lists_name):
+    def addr_list_add(addr_lists, item, addr_list, newrule={}, all_addr_lists_name={}):
         '''addr_list - src_ips or dst_ips'''
         create_items = False
         for ip_list in item.get(addr_list):
