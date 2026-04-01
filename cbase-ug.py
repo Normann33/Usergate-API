@@ -116,7 +116,6 @@ def main():
             }
         
         print(item)
-        exit()
         
         newrule = {}
         newrule['name'] = item.get('name') # Тут получаем VPN логин из аргумента командной строки
