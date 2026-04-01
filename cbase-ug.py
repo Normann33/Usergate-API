@@ -201,10 +201,10 @@ def main():
             for zone_list in ['src_zones', 'dst_zones']:
                 newrule, all_zones_name = Zones.zone_add(zone_manager, item, zone_list, newrule, all_zones_name)
             
-            for addr_list in ['src_ips', 'dst_ips']:
-                newrule, all_addr_lists_name, create_items = AddressList.addr_list_add(addr_list_manager, item, addr_list, newrule, all_addr_lists_name)
+            for addr_list_type in ['src_ips', 'dst_ips']:
+                newrule, all_addr_lists_name, create_items = AddressList.addr_list_add(addr_list_manager, item, addr_list_type, newrule, all_addr_lists_name)
                 if create_items == True:
-                    for ip_list in item[addr_list]:
+                    for ip_list in item[addr_list_type]:
                         ip_list_name = ip_list.get('name')
                         ip_list_id = all_addr_lists_name.get(ip_list_name).get('id')
                         new_values = ip_list.get('items')
@@ -248,9 +248,10 @@ def main():
             addr_list_manager.delete_list(current_addr_list_id)
             all_addr_lists_name = addr_list_manager.get_all_address_lists('name')
             
-            newrule, all_addr_lists_name, create_items = AddressList.addr_list_add(addr_list_manager, item, addr_list, newrule, all_addr_lists_name)
+            addr_list_type = 'dst_ips'
+            newrule, all_addr_lists_name, create_items = AddressList.addr_list_add(addr_list_manager, item, addr_list_type, newrule, all_addr_lists_name)
             if create_items == True:
-                for ip_list in item[addr_list]:
+                for ip_list in item[addr_list_type]:
                     ip_list_name = ip_list.get('name')
                     ip_list_id = all_addr_lists_name.get(ip_list_name).get('id')
                     new_values = ip_list.get('items')
