@@ -50,10 +50,10 @@ def main():
     
     load_dotenv()
 
-    UGUSER = os.getenv('TESTUGUSER')
+    UGUSER = os.getenv('UGUSER')
     # UGPASS = os.getenv('TESTUGPASS')
     UGPASS = keyring.get_password('usergate-api', UGUSER)
-    UGSERVER = os.getenv('TESTUGSERVER')
+    UGSERVER = os.getenv('UGSERVER')
     
     with UsergateClient(
         host=UGSERVER,

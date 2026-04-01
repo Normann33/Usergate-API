@@ -1,0 +1,9 @@
+# Rename to .env and write down valid username and path to keyring key !!!
+
+KEYPATH = ''
+UGUSER = ''
+UGPASS = ''
+UGSERVER = ''
+DBUSER = ''
+DBPASSWORD = ''
+DBNAME = ''

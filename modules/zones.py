@@ -35,3 +35,16 @@ class Zones:
                 # Другая ошибка - пробрасываем дальше
                 raise
         return result
+    
+    @staticmethod
+    def zone_add(zones, item, zone_list, newrule, all_zones_name):
+        '''zone_list - src_zones or dst_zones'''
+        for zone in item.get(zone_list):
+            if zone == 'any':
+                newrule[zone_list] = []
+            elif all_zones_name.get(zone):
+                newrule[zone_list].append(zones.get_by_key(all_zones_name, zone))
+            else:
+                newrule[zone_list].append(zones.create_zone(all_zones_name, zone))
+                all_zones_name = zones.get_all_zones('name')
+        return newrule, all_zones_name
