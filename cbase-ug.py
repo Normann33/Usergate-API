@@ -103,7 +103,7 @@ def main():
             cur.execute("SELECT \"UserName\", ip, iplist FROM vpn_clients WHERE \"UserName\" = %s", (vpnlogin,))
             db_data = cur.fetchone()
         
-        db_ip_list = db_data.get('iplist').split(',')
+        db_ip_list = db_data.get('iplist').split('<br>')
         print(db_ip_list)
         
         item = {
@@ -111,7 +111,7 @@ def main():
             'src_zones': ["gDMZ VPN"],
             "dst_zones": ["Trusted VPN"],
             "src_ips": [{"name": db_data.get('ip'),"items": db_data.get('ip')}], # Тут адрес который выдается пользователю при подключении по впн, читаем из базы
-            "dst_ips": [{"name": vpnlogin,"items": db_data.get('iplist')}], # Тут читаем разрешенные имена из базы, если адрес один - именуем список по адресу, если несколько - по впн логину
+            "dst_ips": [{"name": vpnlogin,"items": db_ip_list}], # Тут читаем разрешенные имена из базы, если адрес один - именуем список по адресу, если несколько - по впн логину
             "services": [{"name": "RDP", "protocols": ["tcp: 3389"]}, {"name": "SSH", "protocols": ["tcp: 22"]}] # Пока хардкодим RDP и SSH
             }
         
