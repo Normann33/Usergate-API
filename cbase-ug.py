@@ -7,6 +7,7 @@ import xlwt
 import keyring
 import xmlrpc.client
 import psycopg2
+import argparse
 from keyrings.cryptfile.cryptfile import CryptFileKeyring
 from psycopg2.extras import RealDictCursor
 from contextlib import contextmanager
@@ -44,28 +45,80 @@ def get_db_cursor(host, port, database, user, password):
 #             all_zones_name = zones.get_all_zones('name')
 #     return newrule, all_zones_name
 
-def addr_list_add(addr_lists, item, addr_list, newrule, all_addr_lists_name):
-    '''addr_list - src_ips or dst_ips'''
-    create_items = False
-    for ip_list in item.get(addr_list):
-        ip_list_name = ip_list.get('name')
-        new_ip_list = ['list_id']
-        if ip_list_name == 'any' or ip_list_name == []:
-            newrule[addr_list] = []
-        elif all_addr_lists_name.get(ip_list_name):
-            new_ip_list.append(addr_lists.get_by_key(all_addr_lists_name, ip_list_name))
-            newrule[addr_list].append(new_ip_list)
-        else:
-            new_ip_list_item = {'type': 'network', 'name': ip_list_name}
-            new_ip_list.append(addr_lists.create_list(all_addr_lists_name, new_ip_list_item))
-            newrule[addr_list].append(new_ip_list)
-            all_addr_lists_name = addr_lists.get_all_address_lists('name')
-            create_items = True
-    return newrule, all_addr_lists_name, create_items
+# def addr_list_add(addr_lists, item, addr_list, newrule, all_addr_lists_name):
+#     '''addr_list - src_ips or dst_ips'''
+#     create_items = False
+#     for ip_list in item.get(addr_list):
+#         ip_list_name = ip_list.get('name')
+#         new_ip_list = ['list_id']
+#         if ip_list_name == 'any' or ip_list_name == []:
+#             newrule[addr_list] = []
+#         elif all_addr_lists_name.get(ip_list_name):
+#             new_ip_list.append(addr_lists.get_by_key(all_addr_lists_name, ip_list_name))
+#             newrule[addr_list].append(new_ip_list)
+#         else:
+#             new_ip_list_item = {'type': 'network', 'name': ip_list_name}
+#             new_ip_list.append(addr_lists.create_list(all_addr_lists_name, new_ip_list_item))
+#             newrule[addr_list].append(new_ip_list)
+#             all_addr_lists_name = addr_lists.get_all_address_lists('name')
+#             create_items = True
+#     return newrule, all_addr_lists_name, create_items
 
+def parse_arguments():
+    """Парсинг аргументов командной строки"""
+    parser = argparse.ArgumentParser(
+        description='Управление пользователями в базе данных',
+        formatter_class=argparse.RawDescriptionHelpFormatter,
+        epilog="""
+        Примеры использования:
+        %(prog)s -l j.smith --create
+        %(prog)s -l j.smith --update
+        %(prog)s -l j.smith --delete
+        %(prog)s -l j.smith --deactivate
+                """
+    )
+    
+    # Обязательный параметр: имя пользователя
+    parser.add_argument(
+        '-l', '--login',
+        type=str,
+        required=True,
+        metavar='USERNAME',
+        help='Имя пользователя (обязательно)'
+    )
+    
+    # Взаимоисключающая группа для действий
+    action_group = parser.add_mutually_exclusive_group(required=True)
+    
+    action_group.add_argument(
+        '--create',
+        action='store_true',
+        help='Создать новое правило доступа'
+    )
+    
+    action_group.add_argument(
+        '--update',
+        action='store_true',
+        help='Изменить правило доступа'
+    )
+    
+    action_group.add_argument(
+        '--delete',
+        action='store_true',
+        help='Удалить правило доступа'
+    )
+    
+    action_group.add_argument(
+        '--deactivate',
+        action='store_true',
+        help='Деактивировать правило доступа'
+    )
+            
+    return parser.parse_args()
 
 def main():
     
+    args = parse_arguments()
     kr = CryptFileKeyring()
     load_dotenv()
 
@@ -82,7 +135,8 @@ def main():
     DBPASSWORD = keyring.get_password('cbase-db', DBUSER)
     DBNAME = os.getenv('DBNAME')
     
-    vpnlogin = sys.argv[1]
+    # vpnlogin = sys.argv[1]
+    vpnlogin = args.login
     
     with UsergateClient(
         host=UGSERVER,
@@ -124,6 +178,7 @@ def main():
         
         print(item)
         
+        
         newrule = {}
         newrule['name'] = item.get('name') # Тут получаем VPN логин из аргумента командной строки
         newrule['action'] = 'accept'
@@ -140,7 +195,7 @@ def main():
             newrule, all_zones_name = Zones.zone_add(zones, item, zone_list, newrule, all_zones_name)
         
         for addr_list in ['src_ips', 'dst_ips']:
-            newrule, all_addr_lists_name, create_items = addr_list_add(addr_lists, item, addr_list, newrule, all_addr_lists_name)
+            newrule, all_addr_lists_name, create_items = AddressList.addr_list_add(addr_lists, item, addr_list, newrule, all_addr_lists_name)
             if create_items == True:
                 for ip_list in item[addr_list]:
                     ip_list_name = ip_list.get('name')
@@ -174,10 +229,19 @@ def main():
                     services.create_service(all_services, new_service_item)
                     all_services = services.get_all_services('name')
                     # print(new_service_item)
-                
-            
-        # rules.create_rule(newrule)
-        print(newrule)
+                    
+        if args.create:
+            rules.create_rule(newrule)
+            print(newrule)
+        
+        elif args.update:
+            pass
+        
+        elif args.delete:
+            pass
+        
+        elif args.deactivate:
+            pass
 
 if __name__ == '__main__':
     main()
