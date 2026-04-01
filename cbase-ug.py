@@ -103,7 +103,11 @@ def main():
             cur.execute("SELECT \"UserName\", ip, iplist FROM vpn_clients WHERE \"UserName\" = %s", (vpnlogin,))
             db_data = cur.fetchone()
         
-        db_iplist = db_data.get('iplist').split('<br>')
+        if db_data.get('iplist'):
+            db_iplist = db_data.get('iplist').split('<br>')
+        else:
+            print('No ip list!')
+            exit()
         if len(db_iplist) == 1:
             db_iplist_name = db_iplist[0]
         else:
