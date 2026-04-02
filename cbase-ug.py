@@ -282,7 +282,6 @@ def main():
                 addr_list_to_update = {'type': 'network', 'name': db_iplist_name}
                 print(addr_list_manager.update_list(current_addr_list_id, addr_list_to_update))
                 for item in addr_list_manager.get_addr_list_items(current_addr_list_id):
-                    print(item)
                     addr_list_manager.delete_list_items(current_addr_list_id, item)
                 for ip_list in rule_item[addr_list_type]:
                     ip_list_name = ip_list.get('name')
