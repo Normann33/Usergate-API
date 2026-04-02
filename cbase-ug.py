@@ -166,6 +166,7 @@ def main():
         
         all_zones_name = zone_manager.get_all_zones('name') # Кэш зон для поиска по name
         all_addr_lists_name = addr_list_manager.get_all_address_lists('name') # Кэш списков адресов для поиска по name
+        all_addr_lists_id = addr_list_manager.get_all_address_lists('id') # Кэш списков адресов для поиска по id
         all_services = services_manager.get_all_services('name')
         all_rules = rule_manager.get_all_rules_dict('name')
         
@@ -274,20 +275,19 @@ def main():
         elif args.update:
             current_rule = all_rules.get(vpnlogin)
             current_addr_list_id = current_rule.get('dst_ips')[0][1]
+            current_addr_list_name = all_addr_lists_id.get(current_addr_list_id)
             print(current_addr_list_id)
-            addr_list_manager.delete_list(current_addr_list_id)
-            all_addr_lists_name = addr_list_manager.get_all_address_lists('name')
-            
-            addr_list_type = 'dst_ips'
-            new_addr_list, all_addr_lists_name, create_items = AddressList.addr_list_add(addr_list_manager, rule_item, addr_list_type, all_addr_lists_name)
-            if create_items == True:
-                for ip_list in rule_item[addr_list_type]:
-                    ip_list_name = ip_list.get('name')
-                    ip_list_id = all_addr_lists_name.get(ip_list_name).get('id')
-                    new_values = ip_list.get('items')
-                    for value in new_values:
-                        new_list_value = {'value': value}
-                        addr_list_manager.create_list_item(ip_list_id, new_list_value)
+            if db_iplist_name != current_addr_list_name:
+                addr_list_to_update = {'type': 'network', 'name': db_iplist_name}
+                print(addr_list_manager.update_list(current_addr_list_id, addr_list_to_update))
+                for item in addr_list_manager.get_addr_list_items(current_addr_list_id):
+                    addr_list_manager.delete_list_items(item)
+                new_values = ip_list.get('items')
+                for value in new_values:
+                    new_list_value = {'value': value}
+                    logging.info(f"{vpnlogin} new_list_value {new_list_value}")
+                    addr_list_manager.create_list_item(ip_list_id, new_list_value)
+                
         
         elif args.delete:
             current_rule = all_rules.get(vpnlogin)

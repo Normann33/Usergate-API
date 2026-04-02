@@ -94,6 +94,20 @@ class AddressList:
             self.client.server.v2.nlists.delete(self.client.auth_token, list_id)
         except Exception as e:
             print(e)
+            
+    def update_list(self, list_id, list_info):
+        try:
+            result = self.client.server.v2.nlists.update(self.client.auth_token, list_id, list_info)
+            return result
+        except Exception as e:
+            return e
+        
+    def delete_list_items(self, list_id, item_id):
+        try:
+            result = self.client.server.v2.nlists.list.delete(self.client.auth_token, list_id, item_id)
+            return result
+        except Exception as e:
+            return e
     
     @staticmethod
     def addr_list_add(addr_list_manager, rule_item, addr_list_type, all_addr_lists_name):
