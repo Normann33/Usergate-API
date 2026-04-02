@@ -196,6 +196,7 @@ def main():
             }
         
         print(f'Item: {rule_item}')
+        logging.info(f"{vpnlogin} rule_item {rule_item}")
         
         if args.create:
             try:
@@ -212,8 +213,12 @@ def main():
                 newrule['log'] = True
                 newrule['log_session_start'] = True
                 
+                logging.info(f"{vpnlogin} newrule creating {newrule}")
+                
                 for zone_list in ['src_zones', 'dst_zones']:
                     newrule, all_zones_name = Zones.zone_add(zone_manager, rule_item, zone_list, newrule, all_zones_name)
+                
+                logging.info(f"{vpnlogin} zone_add done")
                 
                 for addr_list_type in ['src_ips', 'dst_ips']:
                     new_addr_list, all_addr_lists_name, create_items = AddressList.addr_list_add(addr_list_manager, rule_item, addr_list_type, all_addr_lists_name)
@@ -226,6 +231,8 @@ def main():
                             for value in new_values:
                                 new_list_value = {'value': value}
                                 addr_list_manager.create_list_item(ip_list_id, new_list_value)
+                
+                logging.info(f"{vpnlogin} addr_list_add done")
                 
                 for service_list in rule_item['services']:
                     service_list_name = service_list.get('name')
