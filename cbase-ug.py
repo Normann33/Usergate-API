@@ -176,6 +176,7 @@ def main():
             db_iplist = db_data.get('iplist').split('<br>')
         else:
             print('No ip list!')
+            logging.info(f"No ip list, exiting")
             exit()
         if len(db_iplist) == 1:
             db_iplist_name = db_iplist[0]
@@ -249,6 +250,7 @@ def main():
                         
         
             rule_manager.create_rule(newrule)
+            logging.info(f"Rule created")
             print(newrule)
         
         elif args.update:
