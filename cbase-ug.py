@@ -290,10 +290,12 @@ def main():
         
         elif args.delete:
             current_rule = all_rules.get(vpnlogin)
-            current_rule_id = current_rule.get('id')
-            rule_manager.delete_rule(current_rule_id)
-            logging.info(f"{vpnlogin} Rule deleted")
-            pass
+            if current_rule:
+                current_rule_id = current_rule.get('id')
+                rule_manager.delete_rule(current_rule_id)
+                logging.info(f"{vpnlogin} Rule deleted")
+            else:
+                logging.info(f"{vpnlogin} Rule not found")
         
         elif args.deactivate:
             pass
