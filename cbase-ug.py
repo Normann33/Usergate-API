@@ -223,6 +223,7 @@ def main():
                 for addr_list_type in ['src_ips', 'dst_ips']:
                     new_addr_list, all_addr_lists_name, create_items = AddressList.addr_list_add(addr_list_manager, rule_item, addr_list_type, all_addr_lists_name)
                     newrule[addr_list_type] = new_addr_list
+                    logging.info(f"{vpnlogin} new_addr_list {new_addr_list}")
                     if create_items == True:
                         for ip_list in rule_item[addr_list_type]:
                             ip_list_name = ip_list.get('name')
@@ -230,6 +231,7 @@ def main():
                             new_values = ip_list.get('items')
                             for value in new_values:
                                 new_list_value = {'value': value}
+                                logging.info(f"{vpnlogin} new_list_value {new_list_value}")
                                 addr_list_manager.create_list_item(ip_list_id, new_list_value)
                 
                 logging.info(f"{vpnlogin} addr_list_add done")
