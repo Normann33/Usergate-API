@@ -172,6 +172,9 @@ def main():
             cur.execute("SELECT \"UserName\", ip, iplist FROM vpn_clients WHERE \"UserName\" = %s", (vpnlogin,))
             db_data = cur.fetchone()
         
+        if not db_data:
+            logging.info(f"{args.login}, No data in database")
+        
         if db_data.get('iplist'):
             db_iplist = db_data.get('iplist').split('<br>')
         else:
