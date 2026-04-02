@@ -19,7 +19,7 @@ from modules.addr_list import AddressList
 from modules.services import Services
 
 
-log_file = Path(__file__).parent.parent / 'logs' / 'app.log'
+log_file = Path(__file__) / 'logs' / 'app.log'
 log_file.parent.mkdir(exist_ok=True)
 logging.basicConfig(filename=log_file, level=logging.INFO, 
                    format='%(asctime)s - %(levelname)s - %(message)s')
