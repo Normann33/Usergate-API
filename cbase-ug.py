@@ -173,6 +173,12 @@ def main():
             print(f'Item: {rule_item}')
         # logging.info(f"{vpnlogin} rule_item {rule_item}")
         
+        current_rule = all_rules.get(vpnlogin)
+        if current_rule:
+            current_rule_id = current_rule.get('id')
+        else:
+            logging.info(f"{vpnlogin} Can't delete - Rule not found")
+        
         if args.create:
             try:
         
@@ -244,7 +250,7 @@ def main():
                 logging.info(f"{vpnlogin} {e}")
         
         elif args.update:
-            current_rule = all_rules.get(vpnlogin)
+            # current_rule = all_rules.get(vpnlogin)
             current_addr_list_id = current_rule.get('dst_ips')[0][1]
             current_addr_list_name = all_addr_lists_id.get(current_addr_list_id)
             print(current_addr_list_id)
@@ -266,24 +272,26 @@ def main():
                 
         
         elif args.delete:
-            current_rule = all_rules.get(vpnlogin)
-            if current_rule:
-                current_rule_id = current_rule.get('id')
-                rule_manager.delete_rule(current_rule_id)
-                logging.info(f"{vpnlogin} Rule deleted")
-            else:
-                logging.info(f"{vpnlogin} Can't delete - Rule not found")
+            # current_rule = all_rules.get(vpnlogin)
+            # if current_rule:
+            #     current_rule_id = current_rule.get('id')
+            rule_manager.delete_rule(current_rule_id)
+            logging.info(f"{vpnlogin} Rule deleted")
+            # else:
+            #     logging.info(f"{vpnlogin} Can't delete - Rule not found")
         
         elif args.deactivate or args.activate:
-            current_rule = all_rules.get(vpnlogin)
-            if current_rule:
-                current_rule_id = current_rule.get('id')
-                if args.deactivate:
-                    rule_info = {'enabled': False}
-                elif args.activate:
-                    rule_info = {'enabled': True}
-                rule_manager.update_rule(current_rule_id, rule_info)
-                logging.info(f"{vpnlogin} {rule_info}")                
+            # current_rule = all_rules.get(vpnlogin)
+            # if current_rule:
+            #     current_rule_id = current_rule.get('id')
+            if args.deactivate:
+                rule_info = {'enabled': False}
+            elif args.activate:
+                rule_info = {'enabled': True}
+            rule_manager.update_rule(current_rule_id, rule_info)
+            logging.info(f"{vpnlogin} {rule_info}")  
+            # else:
+            #     logging.info(f"{vpnlogin} Can't delete - Rule not found")              
         
 
 if __name__ == '__main__':
