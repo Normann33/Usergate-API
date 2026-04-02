@@ -45,6 +45,8 @@ class AddressList:
         except xmlrpc.client.Fault as e:
             if e.faultCode == 2010 and 'List content is not available' in e.faultString:
                 return 'List content is not available'
+            elif e.faultCode == 2003 and 'Access denied (read only data)' in e.faultString:
+                return 'List is readonly'
             else:
                 raise
         addr_list_values = ', '.join(addr_list_values)

@@ -34,5 +34,12 @@ class FirewallRules:
             return result
         except Exception as e:
             return e
+        
+    def update_rule(self, rule_id, rule_info):
+        try:
+            result = self.client.server.v1.firewall.rule.update(self.client.auth_token, rule_id, rule_info)
+            return result
+        except Exception as e:
+            return e
     
     

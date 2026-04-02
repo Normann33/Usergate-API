@@ -46,10 +46,14 @@ def main():
     # UGPASS = os.getenv('TESTUGPASS')
     # UGSERVER = os.getenv('TESTUGSERVER')
     
-    UGUSER = os.getenv('UGUSER')
-    # UGPASS = os.getenv('UGPASS')
-    UGPASS = keyring.get_password('usergate-api', UGUSER)
-    UGSERVER = os.getenv('UGSERVER')
+    UGUSER = os.getenv('TESTUGUSER_6')
+    UGPASS = os.getenv('TESTUGPASS_6')
+    UGSERVER = os.getenv('TESTUGSERVER_6')
+    
+    # UGUSER = os.getenv('UGUSER')
+    # # UGPASS = os.getenv('UGPASS')
+    # UGPASS = keyring.get_password('usergate-api', UGUSER)
+    # UGSERVER = os.getenv('UGSERVER')
     
     with UsergateClient(
         host=UGSERVER,
@@ -171,7 +175,7 @@ def main():
                         ports_excel_counter += 1
             excel_counter = max(src_excel_counter, dst_excel_counter, ports_excel_counter)
             excel_counter += 1
-    wb.save('Usergate35.xls')
+    wb.save('Usergate619.xls')
 
 if __name__ == '__main__':
     main()

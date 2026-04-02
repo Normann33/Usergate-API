@@ -40,36 +40,6 @@ def get_db_cursor(host, port, database, user, password):
             cur.close()
     finally:
         conn.close()
-# def zone_add(zones, item, zone_list, newrule, all_zones_name):
-#     '''zone_list - src_zones or dst_zones'''
-#     for zone in item.get(zone_list):
-#         if zone == 'any':
-#             newrule[zone_list] = []
-#         elif all_zones_name.get(zone):
-#             newrule[zone_list].append(zones.get_by_key(all_zones_name, zone))
-#         else:
-#             newrule[zone_list].append(zones.create_zone(all_zones_name, zone))
-#             all_zones_name = zones.get_all_zones('name')
-#     return newrule, all_zones_name
-
-# def addr_list_add(addr_lists, item, addr_list, newrule, all_addr_lists_name):
-#     '''addr_list - src_ips or dst_ips'''
-#     create_items = False
-#     for ip_list in item.get(addr_list):
-#         ip_list_name = ip_list.get('name')
-#         new_ip_list = ['list_id']
-#         if ip_list_name == 'any' or ip_list_name == []:
-#             newrule[addr_list] = []
-#         elif all_addr_lists_name.get(ip_list_name):
-#             new_ip_list.append(addr_lists.get_by_key(all_addr_lists_name, ip_list_name))
-#             newrule[addr_list].append(new_ip_list)
-#         else:
-#             new_ip_list_item = {'type': 'network', 'name': ip_list_name}
-#             new_ip_list.append(addr_lists.create_list(all_addr_lists_name, new_ip_list_item))
-#             newrule[addr_list].append(new_ip_list)
-#             all_addr_lists_name = addr_lists.get_all_address_lists('name')
-#             create_items = True
-#     return newrule, all_addr_lists_name, create_items
 
 def parse_arguments():
     """Парсинг аргументов командной строки"""
@@ -304,11 +274,17 @@ def main():
             else:
                 logging.info(f"{vpnlogin} Can't delete - Rule not found")
         
-        elif args.deactivate:
-            pass
+        elif args.deactivate or args.activate:
+            current_rule = all_rules.get(vpnlogin)
+            if current_rule:
+                current_rule_id = current_rule.get('id')
+                if args.deactivate:
+                    rule_info = {'enabled': False}
+                elif args.activate:
+                    rule_info = {'enabled': True}
+                rule_manager.update_rule(current_rule_id, rule_info)
+                logging.info(f"{vpnlogin} {rule_info}")                
         
-        elif args.activate:
-            pass
 
 if __name__ == '__main__':
     main()
