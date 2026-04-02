@@ -28,4 +28,11 @@ class FirewallRules:
                 # Другая ошибка - пробрасываем дальше
                 raise
     
+    def delete_rule(self, rule_id):
+        try:
+            result = self.client.server.v1.firewall.rule.delete(self.client.auth_token, rule_id)
+            return result
+        except Exception as e:
+            return e
+    
     
