@@ -168,35 +168,36 @@ def main():
         all_services = services_manager.get_all_services('name')
         all_rules = rule_manager.get_all_rules_dict('name')
         
-        with get_db_cursor('localhost', 5432, DBNAME, DBUSER, DBPASSWORD) as cur:
-            cur.execute("SELECT \"UserName\", ip, iplist FROM vpn_clients WHERE \"UserName\" = %s", (vpnlogin,))
-            db_data = cur.fetchone()
+        if args.create or args.update:
+            with get_db_cursor('localhost', 5432, DBNAME, DBUSER, DBPASSWORD) as cur:
+                cur.execute("SELECT \"UserName\", ip, iplist FROM vpn_clients WHERE \"UserName\" = %s", (vpnlogin,))
+                db_data = cur.fetchone()
+            
+            if not db_data:
+                logging.info(f"{args.login}, No data in database")
+                exit()
+            
+            if db_data.get('iplist'):
+                db_iplist = db_data.get('iplist').split('<br>')
+            else:
+                print('No ip list!')
+                logging.info(f"{vpnlogin} No ip list, exiting")
+                exit()
+            if len(db_iplist) == 1:
+                db_iplist_name = db_iplist[0]
+            else:
+                db_iplist_name = vpnlogin
         
-        if not db_data:
-            logging.info(f"{args.login}, No data in database")
-            exit()
-        
-        if db_data.get('iplist'):
-            db_iplist = db_data.get('iplist').split('<br>')
-        else:
-            print('No ip list!')
-            logging.info(f"{vpnlogin} No ip list, exiting")
-            exit()
-        if len(db_iplist) == 1:
-            db_iplist_name = db_iplist[0]
-        else:
-            db_iplist_name = vpnlogin
-        
-        rule_item = {
-            'name': vpnlogin,
-            'src_zones': ['gDMZ VPN'],
-            'dst_zones': ['Trusted VPN'],
-            'src_ips': [{'name': db_data.get('ip'), 'items': db_data.get('ip')}], # Тут адрес который выдается пользователю при подключении по впн, читаем из базы
-            'dst_ips': [{'name': db_iplist_name, 'items': db_iplist}], # Тут читаем разрешенные имена из базы, если адрес один - именуем список по адресу, если несколько - по впн логину
-            'services': [{'name': 'RDP', 'protocols': ['tcp: 3389']}, {'name': 'SSH', 'protocols': ['tcp: 22']}] # Пока хардкодим RDP и SSH
-            }
-        
-        print(f'Item: {rule_item}')
+            rule_item = {
+                'name': vpnlogin,
+                'src_zones': ['gDMZ VPN'],
+                'dst_zones': ['Trusted VPN'],
+                'src_ips': [{'name': db_data.get('ip'), 'items': db_data.get('ip')}], # Тут адрес который выдается пользователю при подключении по впн, читаем из базы
+                'dst_ips': [{'name': db_iplist_name, 'items': db_iplist}], # Тут читаем разрешенные имена из базы, если адрес один - именуем список по адресу, если несколько - по впн логину
+                'services': [{'name': 'RDP', 'protocols': ['tcp: 3389']}, {'name': 'SSH', 'protocols': ['tcp: 22']}] # Пока хардкодим RDP и SSH
+                }
+            
+            print(f'Item: {rule_item}')
         # logging.info(f"{vpnlogin} rule_item {rule_item}")
         
         if args.create:
