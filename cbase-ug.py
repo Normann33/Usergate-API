@@ -196,7 +196,7 @@ def main():
             }
         
         print(f'Item: {rule_item}')
-        logging.info(f"{vpnlogin} rule_item {rule_item}")
+        # logging.info(f"{vpnlogin} rule_item {rule_item}")
         
         if args.create:
             try:
@@ -213,7 +213,7 @@ def main():
                 newrule['log'] = True
                 newrule['log_session_start'] = True
                 
-                logging.info(f"{vpnlogin} newrule creating {newrule}")
+                # logging.info(f"{vpnlogin} newrule creating {newrule}")
                 
                 for zone_list in ['src_zones', 'dst_zones']:
                     newrule, all_zones_name = Zones.zone_add(zone_manager, rule_item, zone_list, newrule, all_zones_name)
