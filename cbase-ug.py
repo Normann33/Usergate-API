@@ -283,11 +283,15 @@ def main():
                 for item in addr_list_manager.get_addr_list_items(current_addr_list_id):
                     print(item)
                     addr_list_manager.delete_list_items(current_addr_list_id, item)
-                new_values = ip_list.get('items')
-                for value in new_values:
-                    new_list_value = {'value': value}
-                    logging.info(f"{vpnlogin} new_list_value {new_list_value}")
-                    addr_list_manager.create_list_item(ip_list_id, new_list_value)
+                for ip_list in rule_item[addr_list_type]:
+                    ip_list_name = ip_list.get('name')
+                    ip_list_id = all_addr_lists_name.get(ip_list_name).get('id')
+                    new_values = ip_list.get('items')
+                    new_values = ip_list.get('items')
+                    for value in new_values:
+                        new_list_value = {'value': value}
+                        logging.info(f"{vpnlogin} new_list_value {new_list_value}")
+                        addr_list_manager.create_list_item(ip_list_id, new_list_value)
                 
         
         elif args.delete:
