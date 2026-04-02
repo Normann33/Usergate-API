@@ -151,7 +151,8 @@ def main():
     vpnlogin = args.login
     
     # logging.info(f"Запуск: {args.login}, create={args.create}")
-    logging.info(f"Запуск: {args}")
+    logging.info(f'============================Запуск============================')
+    logging.info(f"Параметры: {args}")
     
     with UsergateClient(
         host=UGSERVER,
