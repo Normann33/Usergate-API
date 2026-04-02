@@ -150,7 +150,8 @@ def main():
     
     vpnlogin = args.login
     
-    logging.info(f"Запуск: {args.login}, create={args.create}")
+    # logging.info(f"Запуск: {args.login}, create={args.create}")
+    logging.info(f"Запуск: {args}")
     
     with UsergateClient(
         host=UGSERVER,
@@ -295,7 +296,7 @@ def main():
                 rule_manager.delete_rule(current_rule_id)
                 logging.info(f"{vpnlogin} Rule deleted")
             else:
-                logging.info(f"{vpnlogin} Rule not found")
+                logging.info(f"{vpnlogin} Can't delete - Rule not found")
         
         elif args.deactivate:
             pass
