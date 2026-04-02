@@ -277,6 +277,7 @@ def main():
             current_addr_list_id = current_rule.get('dst_ips')[0][1]
             current_addr_list_name = all_addr_lists_id.get(current_addr_list_id)
             print(current_addr_list_id)
+            addr_list_type = 'dst_ips'
             if db_iplist_name != current_addr_list_name:
                 addr_list_to_update = {'type': 'network', 'name': db_iplist_name}
                 print(addr_list_manager.update_list(current_addr_list_id, addr_list_to_update))
