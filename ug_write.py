@@ -50,10 +50,10 @@ def main():
     
     load_dotenv()
 
-    UGUSER = os.getenv('UGUSER')
+    UGUSER = os.getenv('TESTUGUSER')
     # UGPASS = os.getenv('TESTUGPASS')
     UGPASS = keyring.get_password('usergate-api', UGUSER)
-    UGSERVER = os.getenv('UGSERVER')
+    UGSERVER = os.getenv('TESTUGSERVER')
     
     with UsergateClient(
         host=UGSERVER,
@@ -61,7 +61,7 @@ def main():
         password=UGPASS
     ) as client:
     
-        e2j = ExcelToJson('all_staff3_normalized_2.xls') # Input file
+        e2j = ExcelToJson('all_staff3_test.xls') # Input file
         rule_manager = FirewallRules(client)
         zone_manager = Zones(client)
         addr_list_manager = AddressList(client)
@@ -87,10 +87,11 @@ def main():
             for zone_list in ['src_zones', 'dst_zones']:
                 newrule, all_zones_name = Zones.zone_add(zone_manager, item, zone_list, newrule, all_zones_name)
             
-            for addr_list in ['src_ips', 'dst_ips']:
-                newrule, all_addr_lists_name, create_items = AddressList.addr_list_add(addr_list_manager, item, addr_list, newrule, all_addr_lists_name)
+            for addr_list_type in ['src_ips', 'dst_ips']:
+                new_addr_list, all_addr_lists_name, create_items = AddressList.addr_list_add(addr_list_manager, item, addr_list_type, all_addr_lists_name)
+                newrule[addr_list_type] = new_addr_list
                 if create_items == True:
-                    for ip_list in item[addr_list]:
+                    for ip_list in item[addr_list_type]:
                         ip_list_name = ip_list.get('name')
                         ip_list_id = all_addr_lists_name.get(ip_list_name).get('id')
                         new_values = ip_list.get('items')

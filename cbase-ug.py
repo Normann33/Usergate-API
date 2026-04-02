@@ -2,21 +2,28 @@
 '''Получаем информацию из CBase и создаем правила на Usergate'''
 
 import os
-import sys
-import xlwt
 import keyring
 import xmlrpc.client
 import psycopg2
 import argparse
+import logging
 from keyrings.cryptfile.cryptfile import CryptFileKeyring
 from psycopg2.extras import RealDictCursor
 from contextlib import contextmanager
 from dotenv import load_dotenv
+from pathlib import Path
 from modules.ug_client import UsergateClient
 from modules.fw_rules import FirewallRules
 from modules.zones import Zones
 from modules.addr_list import AddressList
 from modules.services import Services
+
+
+log_file = Path(__file__).parent.parent / 'logs' / 'app.log'
+log_file.parent.mkdir(exist_ok=True)
+logging.basicConfig(filename=log_file, level=logging.INFO, 
+                   format='%(asctime)s - %(levelname)s - %(message)s')
+
 
 @contextmanager
 def get_db_cursor(host, port, database, user, password):
@@ -142,6 +149,8 @@ def main():
     DBNAME = os.getenv('DBNAME')
     
     vpnlogin = args.login
+    
+    logging.info(f"Запуск: {args.login}, create={args.create}")
     
     with UsergateClient(
         host=UGSERVER,
