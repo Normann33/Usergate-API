@@ -174,6 +174,7 @@ def main():
         
         if not db_data:
             logging.info(f"{args.login}, No data in database")
+            exit()
         
         if db_data.get('iplist'):
             db_iplist = db_data.get('iplist').split('<br>')
