@@ -287,6 +287,11 @@ def main():
                         addr_list_manager.create_list_item(ip_list_id, new_list_value)
         
         elif args.delete:
+            current_rule = all_rules.get(vpnlogin)
+            current_rule_id = current_rule.get('id')
+            print(current_rule)
+            print(current_rule_id)
+            logging.info(f"{vpnlogin} Rule deleted")
             pass
         
         elif args.deactivate:
