@@ -131,3 +131,14 @@ class AddressList:
                 all_addr_lists_name = addr_list_manager.get_all_address_lists('name')
                 create_items = True
         return new_addr_list, all_addr_lists_name, create_items
+    
+    @staticmethod
+    def addr_list_add_items(rule_item, addr_list_type, all_addr_lists_name, addr_list_manager):
+        for ip_list in rule_item[addr_list_type]:
+            ip_list_name = ip_list.get('name')
+            ip_list_id = all_addr_lists_name.get(ip_list_name).get('id')
+            new_values = ip_list.get('items')
+            new_values = ip_list.get('items')
+            for value in new_values:
+                new_list_value = {'value': value}
+                addr_list_manager.create_list_item(ip_list_id, new_list_value)

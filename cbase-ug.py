@@ -206,14 +206,16 @@ def main():
                     newrule[addr_list_type] = new_addr_list
                     logging.info(f"{vpnlogin} new_addr_list {new_addr_list}")
                     if create_items == True:
-                        for ip_list in rule_item[addr_list_type]:
-                            ip_list_name = ip_list.get('name')
-                            ip_list_id = all_addr_lists_name.get(ip_list_name).get('id')
-                            new_values = ip_list.get('items')
-                            for value in new_values:
-                                new_list_value = {'value': value}
-                                logging.info(f"{vpnlogin} new_list_value {new_list_value}")
-                                addr_list_manager.create_list_item(ip_list_id, new_list_value)
+                        AddressList.addr_list_add_items(rule_item, addr_list_type, all_addr_lists_name, addr_list_manager)
+                        logging.info(f"{vpnlogin} new_list_value {new_list_value}")
+                        # for ip_list in rule_item[addr_list_type]:
+                        #     ip_list_name = ip_list.get('name')
+                        #     ip_list_id = all_addr_lists_name.get(ip_list_name).get('id')
+                        #     new_values = ip_list.get('items')
+                        #     for value in new_values:
+                        #         new_list_value = {'value': value}
+                                # logging.info(f"{vpnlogin} new_list_value {new_list_value}")
+                                # addr_list_manager.create_list_item(ip_list_id, new_list_value)
                 
                 logging.info(f"{vpnlogin} addr_list_add done")
                 
