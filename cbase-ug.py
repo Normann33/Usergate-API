@@ -207,7 +207,7 @@ def main():
                     logging.info(f"{vpnlogin} new_addr_list {new_addr_list}")
                     if create_items == True:
                         AddressList.addr_list_add_items(rule_item, addr_list_type, all_addr_lists_name, addr_list_manager)
-                        logging.info(f"{vpnlogin} new_list_value {new_list_value}")
+                        logging.info(f"{vpnlogin} new items created")
                         # for ip_list in rule_item[addr_list_type]:
                         #     ip_list_name = ip_list.get('name')
                         #     ip_list_id = all_addr_lists_name.get(ip_list_name).get('id')
