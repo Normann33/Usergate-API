@@ -121,8 +121,11 @@ def main():
     vpnlogin = args.login
     
     # logging.info(f"Запуск: {args.login}, create={args.create}")
+    action = 'create' if args.create else 'update' if args.update else 'delete' if args.delete else 'deactivate'
+
     logging.info(f'============================Запуск============================')
-    logging.info(f"Параметры: {args}")
+    # logging.info(f"Параметры: {args}")
+    logging.info(f"Пользователь: {args.login}, действие: {action}")
     
     with UsergateClient(
         host=UGSERVER,
