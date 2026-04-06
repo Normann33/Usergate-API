@@ -50,14 +50,14 @@ def main():
     
     load_dotenv()
 
-    UGUSER = os.getenv('TESTUGUSER')
-    # UGPASS = os.getenv('TESTUGPASS')
-    UGPASS = keyring.get_password('usergate-api', UGUSER)
-    UGSERVER = os.getenv('TESTUGSERVER')
+    # UGUSER = os.getenv('TESTUGUSER')
+    # # UGPASS = os.getenv('TESTUGPASS')
+    # UGPASS = keyring.get_password('usergate-api', UGUSER)
+    # UGSERVER = os.getenv('TESTUGSERVER')
     
-    # UGUSER = os.getenv('TESTUGUSER_6')
-    # UGPASS = os.getenv('TESTUGPASS_6')
-    # UGSERVER = os.getenv('TESTUGSERVER_6')
+    UGUSER = os.getenv('TESTUGUSER_6')
+    UGPASS = os.getenv('TESTUGPASS_6')
+    UGSERVER = os.getenv('TESTUGSERVER_6')
     
     with UsergateClient(
         host=UGSERVER,
@@ -73,7 +73,7 @@ def main():
         else:
             version_619 = False
     
-        e2j = ExcelToJson('all_staff3_test.xls') # Input file
+        e2j = ExcelToJson('all_staff3_normalized_2.xls') # Input file
         rule_manager = FirewallRules(client)
         zone_manager = Zones(client)
         addr_list_manager = AddressList(client)

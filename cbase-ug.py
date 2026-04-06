@@ -130,6 +130,14 @@ def main():
         username=UGUSER,
         password=UGPASS
     ) as client:
+        
+        # Version detect:
+        result = client.server.v2.core.license.info(client.auth_token)
+        version = result.get('version')
+        if '6.1.9' in version:
+            version_619 = True
+        else:
+            version_619 = False
     
         rule_manager = FirewallRules(client)
         zone_manager = Zones(client)
@@ -220,7 +228,10 @@ def main():
                     elif all_services.get(service_list_name):
                         service_id = all_services.get(service_list_name).get('id')
                         new_service_list.append(service_id)
-                        newrule['services'].append(new_service_list)
+                        if version_619 == True:
+                            newrule['services'].append(service_id)
+                        else:
+                            newrule['services'].append(new_service_list)
                     else:
                         new_protocol_list = []
                         item_protocol_list = rule_item.get('services')
