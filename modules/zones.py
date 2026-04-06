@@ -31,6 +31,16 @@ class Zones:
         except xmlrpc.client.Fault as e:
             if e.faultCode == 409 and 'Object with the same name already exists' in e.faultString:
                 result = self.get_by_key(zones_dict, zone_name)
+            elif e.faultCode == 2 and 'Internal server error' in e.faultString:
+                # Для версии 6.1.9
+                zone_data_619 = {
+                    'name': zone_name,         
+                    'enable_antispoof': True,  
+                    'networks': [],            
+                    'dos_profiles': [],
+                    'services_access': []
+                }
+                result = self.client.server.v1.netmanager.zone.add(self.client.auth_token, zone_data_619)
             else:
                 # Другая ошибка - пробрасываем дальше
                 raise
