@@ -1,8 +1,10 @@
 #!/usr/bin/env python3
 
 import xmlrpc.client
+import logging
 from modules.ug_client import UsergateClient
 
+logger = logging.getLogger(__name__)
 
 class Zones:
     
@@ -28,9 +30,11 @@ class Zones:
            определяем и возвращаем ее id'''
         try:
             result = self.client.server.v1.netmanager.zone.add(self.client.auth_token, {'name': zone_name})
+            logger.info(f'Зона создана: {zone_name} (ID: {result})')
         except xmlrpc.client.Fault as e:
             if e.faultCode == 409 and 'Object with the same name already exists' in e.faultString:
                 result = self.get_by_key(zones_dict, zone_name)
+                logger.info(f'Зона {zone_name} уже существует (ID: {result})')
             elif e.faultCode == 2 and 'Internal server error' in e.faultString:
                 # Для версии 6.1.9
                 zone_data_619 = {
@@ -41,8 +45,10 @@ class Zones:
                     'services_access': []
                 }
                 result = self.client.server.v1.netmanager.zone.add(self.client.auth_token, zone_data_619)
+                logger.info(f'Зона создана: {zone_name} (ID: {result})')
             else:
                 # Другая ошибка - пробрасываем дальше
+                logger.error(f"Ошибка создания зоны {zone_name}: {e}", exc_info=True)
                 raise
         return result
     

@@ -12,6 +12,7 @@ from psycopg2.extras import RealDictCursor
 from contextlib import contextmanager
 from dotenv import load_dotenv
 from pathlib import Path
+from logging_config import setup_logging
 from modules.ug_client import UsergateClient
 from modules.fw_rules import FirewallRules
 from modules.zones import Zones
@@ -19,11 +20,13 @@ from modules.addr_list import AddressList
 from modules.services import Services
 
 
-log_file = 'app.log'
-# log_file.parent.mkdir(exist_ok=True)
-logging.basicConfig(filename=log_file, level=logging.INFO, 
-                   format='%(asctime)s - %(levelname)s - %(message)s')
+# log_file = 'app.log'
+# # log_file.parent.mkdir(exist_ok=True)
+# logging.basicConfig(filename=log_file, level=logging.INFO, 
+#                    format='%(asctime)s - %(levelname)s - %(message)s')
 
+setup_logging('app.log', level=logging.INFO)
+logger = logging.getLogger(__name__)
 
 @contextmanager
 def get_db_cursor(host, port, database, user, password):
