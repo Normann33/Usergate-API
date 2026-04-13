@@ -266,7 +266,7 @@ def main():
             if db_iplist_name != current_addr_list_name:
                 addr_list_to_update = {'type': 'network', 'name': db_iplist_name}
                 print(addr_list_manager.update_list(current_addr_list_id, addr_list_to_update))
-                for item in addr_list_manager.get_addr_list_items(current_addr_list_id):
+                for item in addr_list_manager.get_addr_list_items(current_addr_list_id).split('\n'):
                     ITEMS = addr_list_manager.get_addr_list_items(current_addr_list_id)
                     logging.info(ITEMS)
                     print(f'Item {item} in address list {current_addr_list_id}')
