@@ -55,9 +55,13 @@ def main():
     # UGPASS = keyring.get_password('usergate-api', UGUSER)
     # UGSERVER = os.getenv('TESTUGSERVER')
     
-    UGUSER = os.getenv('TESTUGUSER_6')
-    UGPASS = os.getenv('TESTUGPASS_6')
-    UGSERVER = os.getenv('TESTUGSERVER_6')
+    # UGUSER = os.getenv('TESTUGUSER_6')
+    # UGPASS = os.getenv('TESTUGPASS_6')
+    # UGSERVER = os.getenv('TESTUGSERVER_6')
+    
+    UGUSER = os.getenv('UGMFBUSER')
+    UGPASS = os.getenv('UGMFBPASS')
+    UGSERVER = os.getenv('UGMFB')
     
     with UsergateClient(
         host=UGSERVER,

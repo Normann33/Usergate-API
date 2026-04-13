@@ -269,7 +269,9 @@ def main():
                 logging.info(f"{vpnlogin} new items created")
         
         elif args.delete:
+            current_addr_list_id = current_rule.get('dst_ips')[0][1]
             rule_manager.delete_rule(current_rule_id)
+            addr_list_manager.delete_list(current_addr_list_id)
             logging.info(f"{vpnlogin} Rule deleted")
         
         elif args.deactivate or args.activate:

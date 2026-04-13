@@ -95,7 +95,11 @@ class AddressList:
         try:
             self.client.server.v2.nlists.delete(self.client.auth_token, list_id)
         except Exception as e:
-            print(e)
+            if e.faultCode == 502 and 'List with given id is used by' in e.faultString:
+                print('ip address list is used by another rule')
+                pass
+            else:
+                print(e)
             
     def update_list(self, list_id, list_info):
         try:
