@@ -2,7 +2,10 @@
 #!/usr/bin/env python3
 
 import xmlrpc.client
+import logging
 from modules.ug_client import UsergateClient
+
+logger = logging.getLogger(__name__)
 
 class AddressList:
     
@@ -72,47 +75,60 @@ class AddressList:
         
         try:
             result = self.client.server.v2.nlists.add(self.client.auth_token, new_list)
+            logger.info(f'Список ip {new_list.get('name')} успешно создан (ID: {result})')
         except xmlrpc.client.Fault as e:
             if e.faultCode == 409 and 'Object with the same name already exists' in e.faultString:
                 result = self.get_by_key(addr_list_dict, new_list.get('name'))
+                logger.error(f'Список ip {new_list.get('name')} уже существует (ID: {result})')
             else:
                 # Другая ошибка - пробрасываем дальше
+                logger.error(f"Ошибка создания списка ip {new_list.get('name')}: {e}", exc_info=True)
                 raise
         return result
         
     def create_list_item(self, list_id, new_item):
         try:
             self.client.server.v2.nlists.list.add(self.client.auth_token, list_id, new_item)
+            logger.info(f'ip адреса {new_item} успешно добавлены в список (ID: {list_id})')
         except xmlrpc.client.Fault as e:
             if e.faultCode == 2001 and 'Item duplicate' in e.faultString:
+                logger.error(f'ip адрес {new_item} уже существует)')
                 print('Item already exists')
                 pass
             else:
                 # Другая ошибка - пробрасываем дальше
+                logger.error(f"Ошибка создания ip {new_item}: {e}", exc_info=True)
                 raise
     
     def delete_list(self, list_id):
         try:
             self.client.server.v2.nlists.delete(self.client.auth_token, list_id)
+            logger.info(f'Список ip адресов {list_id} успешно удален')
         except Exception as e:
             if e.faultCode == 502 and 'List with given id is used by' in e.faultString:
                 print('ip address list is used by another rule')
+                logger.error(f"Список ip {list_id} используется другим правилом")
                 pass
             else:
+                logger.error(f"Ошибка удаления списка ip {list_id}: {e}", exc_info=True)
                 print(e)
             
     def update_list(self, list_id, list_info):
         try:
             result = self.client.server.v2.nlists.update(self.client.auth_token, list_id, list_info)
+            logger.info(f'Список ip адресов {list_id} успешно обновлен')
             return result
         except Exception as e:
+            logger.error(f"Ошибка обновления списка ip {list_id}: {e}", exc_info=True)
             return e
         
     def delete_list_items(self, list_id, item_id):
         try:
             result = self.client.server.v2.nlists.list.delete(self.client.auth_token, list_id, item_id)
+            logger.info(f'ip адрес {list_id} {item_id} успешно удален')
             return result
         except Exception as e:
+            logger.error(f"Ошибка удаления ip адреса {list_id}, {item_id}: {e}", exc_info=True)
             return e
     
     @staticmethod

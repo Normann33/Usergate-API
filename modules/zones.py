@@ -34,7 +34,7 @@ class Zones:
         except xmlrpc.client.Fault as e:
             if e.faultCode == 409 and 'Object with the same name already exists' in e.faultString:
                 result = self.get_by_key(zones_dict, zone_name)
-                logger.info(f'Зона {zone_name} уже существует (ID: {result})')
+                logger.error(f'Зона {zone_name} уже существует (ID: {result})')
             elif e.faultCode == 2 and 'Internal server error' in e.faultString:
                 # Для версии 6.1.9
                 zone_data_619 = {

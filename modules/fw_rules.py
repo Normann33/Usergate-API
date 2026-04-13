@@ -1,7 +1,10 @@
 #!/usr/bin/env python3
 
 import xmlrpc
+import logging
 from modules.ug_client import UsergateClient
+
+logger = logging.getLogger(__name__)
 
 class FirewallRules:
     
@@ -20,26 +23,33 @@ class FirewallRules:
     
     def create_rule(self, new_rule):
         try:
-            self.client.server.v1.firewall.rule.add(self.client.auth_token, new_rule)
+            result = self.client.server.v1.firewall.rule.add(self.client.auth_token, new_rule)
+            logger.info(f'Правило {new_rule.get('name')} успешно создано (ID: {result})')
         except xmlrpc.client.Fault as e:
             if e.faultCode == 409 and 'Name already exist' in e.faultString:
+                logger.error(f'Правило {new_rule.get('name')} уже существует')
                 pass
             else:
                 # Другая ошибка - пробрасываем дальше
+                logger.error(f"Ошибка создания правила {new_rule.get('name')}: {e}", exc_info=True)
                 raise
     
     def delete_rule(self, rule_id):
         try:
             result = self.client.server.v1.firewall.rule.delete(self.client.auth_token, rule_id)
+            logger.info(f'Правило {rule_id} успешно удалено (ID: {result})')
             return result
         except Exception as e:
+            logger.error(f"Ошибка удаления правила {rule_id}: {e}", exc_info=True)
             return e
         
     def update_rule(self, rule_id, rule_info):
         try:
             result = self.client.server.v1.firewall.rule.update(self.client.auth_token, rule_id, rule_info)
+            logger.info(f'Правило {rule_id} успешно обновлено')
             return result
         except Exception as e:
+            logger.error(f"Ошибка обновления правила {rule_id}: {e}", exc_info=True)
             return e
     
     
