@@ -38,13 +38,16 @@ class AddressList:
             print(e, addr_list_key)
         
     
-    def get_addr_list_items(self, addr_list_id):
+    def get_addr_list_items(self, addr_list_id, result_type='values'):
         addr_list_values = []
         try:
             addr_list_items = self.client.server.v2.nlists.list.list(self.client.auth_token, int(addr_list_id), 0, 1000, {}, [])
-            for item in addr_list_items.get('items', []):
-                        item_value = item.get('value', '—')
-                        addr_list_values.append(item_value)
+            if result_type == 'values':
+                for item in addr_list_items.get('items', []):
+                    item_value = item.get('value', '—')
+                    addr_list_values.append(item_value)
+            elif result_type == 'full':
+                return addr_list_items
         except xmlrpc.client.Fault as e:
             if e.faultCode == 2010 and 'List content is not available' in e.faultString:
                 return 'List content is not available'
