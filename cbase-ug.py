@@ -261,16 +261,15 @@ def main():
         elif args.update:
             current_addr_list_id = current_rule.get('dst_ips')[0][1]
             current_addr_list_name = all_addr_lists_id.get(current_addr_list_id)
+            print(current_addr_list_id)
+            addr_list_type = 'dst_ips'
             if db_iplist_name != current_addr_list_name:
-                print(current_addr_list_id)
-                addr_list_type = 'dst_ips'
-                if db_iplist_name != current_addr_list_name:
-                    current_items = addr_list_manager.get_addr_list_items(current_addr_list_id, result_type='full')
-                    for item in current_items.get('items'):
-                        print(item.get('id'))
-                        addr_list_manager.delete_list_items(current_addr_list_id, item.get('id'))
-                    AddressList.addr_list_add_items(rule_item, addr_list_type, all_addr_lists_name, addr_list_manager)
-                    logging.info(f"{vpnlogin} new items created")
+                current_items = addr_list_manager.get_addr_list_items(current_addr_list_id, result_type='full')
+                for item in current_items.get('items'):
+                    print(item.get('id'))
+                    addr_list_manager.delete_list_items(current_addr_list_id, item.get('id'))
+                AddressList.addr_list_add_items(rule_item, addr_list_type, all_addr_lists_name, addr_list_manager)
+                logging.info(f"{vpnlogin} new items created")
         
         elif args.delete:
             current_addr_list_id = current_rule.get('dst_ips')[0][1]
