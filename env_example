@@ -2,6 +2,11 @@
 
 KEYPATH = ''
 UGUSER = ''
-UGSERVER = ''
+UGSERVER = '' # Единичный Usergate для выгрузки/загрузки правил ug-read - ug-write
+UGSERVERS = '' # Example: '192.168.0.1, 192.168.0.2' Список Usergate для скрипта интеграции с CBase
+
 DBUSER = ''
 DBNAME = ''
+
+CISCOUSER = ''
+ASALIST = '' # Example: '192.168.0.1, 192.168.0.2'
