@@ -293,26 +293,26 @@ def main():
                 rule_manager.update_rule(current_rule_id, rule_info)
                 logging.info(f"{vpnlogin} {rule_info}")  
 
-    for CISCOASA in ASALIST.split(','):
-        try:
-            with ASAConnection(host=CISCOASA, username=CISCOUSER, password=CISCOPASS, port='22') as connection:
-                protocol = 'tcp'
-                src_ip = db_data.get('ip')
-                ip_list = db_data.get('iplist').split('<br>')
-                acl_manager = AsaACL(connection, vpnlogin, protocol, src_ip)
-                if args.create:
-                    print(acl_manager.create_object_group(ip_list))
-                    print(acl_manager.create_acl_rule())
-                elif args.update:
-                    print(acl_manager.delete_item('access-list'))
-                    print(acl_manager.delete_item('object-group'))
-                    print(acl_manager.create_object_group(ip_list))
-                    print(acl_manager.create_acl_rule())
-                elif args.delete:
-                    print(acl_manager.delete_item('access-list'))
-                    print(acl_manager.delete_item('object-group'))
-        except Exception as e:
-            logging.error(f'ASA {CISCOASA} недоступна')
+    # for CISCOASA in ASALIST.split(','):
+    #     try:
+    #         with ASAConnection(host=CISCOASA, username=CISCOUSER, password=CISCOPASS, port='22') as connection:
+    #             protocol = 'tcp'
+    #             src_ip = db_data.get('ip')
+    #             ip_list = db_data.get('iplist').split('<br>')
+    #             acl_manager = AsaACL(connection, vpnlogin, protocol, src_ip)
+    #             if args.create:
+    #                 print(acl_manager.create_object_group(ip_list))
+    #                 print(acl_manager.create_acl_rule())
+    #             elif args.update:
+    #                 print(acl_manager.delete_item('access-list'))
+    #                 print(acl_manager.delete_item('object-group'))
+    #                 print(acl_manager.create_object_group(ip_list))
+    #                 print(acl_manager.create_acl_rule())
+    #             elif args.delete:
+    #                 print(acl_manager.delete_item('access-list'))
+    #                 print(acl_manager.delete_item('object-group'))
+    #     except Exception as e:
+    #         logging.error(f'ASA {CISCOASA} недоступна')
 
 if __name__ == '__main__':
     main()
