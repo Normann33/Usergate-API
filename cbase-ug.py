@@ -273,6 +273,15 @@ def main():
                 print(current_addr_list_id)
                 addr_list_type = 'dst_ips'
                 if db_iplist_name != current_addr_list_name:
+                    rule_manager.delete_rule(current_rule_id)
+                    addr_list_manager.delete_list(current_addr_list_id)
+                    new_addr_list, all_addr_lists_name, create_items = AddressList.addr_list_add(addr_list_manager, rule_item, addr_list_type, all_addr_lists_name)
+                    newrule[addr_list_type] = new_addr_list
+                    logging.info(f"{vpnlogin} new_addr_list {new_addr_list}")
+                    if create_items == True:
+                        AddressList.addr_list_add_items(rule_item, addr_list_type, all_addr_lists_name, addr_list_manager)
+                        logging.info(f"{vpnlogin} new items created")
+                else:
                     current_items = addr_list_manager.get_addr_list_items(current_addr_list_id, result_type='full')
                     for item in current_items.get('items'):
                         print(item.get('id'))
