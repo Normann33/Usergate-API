@@ -145,7 +145,7 @@ def main():
                 exit()
             
             if db_data.get('iplist'):
-                db_iplist = db_data.get('iplist').split('<br>')
+                db_iplist = db_data.get('iplist').split('\n')
             else:
                 print('No ip list!')
                 logging.info(f"{vpnlogin} No ip list, exiting")
