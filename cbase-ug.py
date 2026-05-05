@@ -135,24 +135,25 @@ def main():
     logging.info(f'============================Запуск============================')
     logging.info(f"Пользователь: {args.login}, действие: {action}")
     
-    with get_db_cursor('localhost', 5432, DBNAME, DBUSER, DBPASSWORD) as cur:
-        cur.execute("SELECT \"UserName\", ip, iplist FROM vpn_clients WHERE \"UserName\" = %s", (vpnlogin,))
-        db_data = cur.fetchone()
-    
-        if not db_data and not args.delete:
-            logging.info(f"{args.login}, No data in database")
-            exit()
-        
-        if db_data.get('iplist'):
-            db_iplist = db_data.get('iplist').split('<br>')
-        else:
-            print('No ip list!')
-            logging.info(f"{vpnlogin} No ip list, exiting")
-            exit()
-        if len(db_iplist) == 1:
-            db_iplist_name = db_iplist[0]
-        else:
-            db_iplist_name = vpnlogin
+    if not args.delete:
+        with get_db_cursor('localhost', 5432, DBNAME, DBUSER, DBPASSWORD) as cur:
+            cur.execute("SELECT \"UserName\", ip, iplist FROM vpn_clients WHERE \"UserName\" = %s", (vpnlogin,))
+            db_data = cur.fetchone()
+
+            if not db_data:
+                logging.info(f"{args.login}, No data in database")
+                exit()
+            
+            if db_data.get('iplist'):
+                db_iplist = db_data.get('iplist').split('<br>')
+            else:
+                print('No ip list!')
+                logging.info(f"{vpnlogin} No ip list, exiting")
+                exit()
+            if len(db_iplist) == 1:
+                db_iplist_name = db_iplist[0]
+            else:
+                db_iplist_name = vpnlogin
     
     for UGSERVER in UGSERVERS.split(','):
         with UsergateClient(
