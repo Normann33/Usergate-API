@@ -161,7 +161,8 @@ class AddressList:
             ip_list_name = ip_list.get('name')
             ip_list_id = all_addr_lists_name.get(ip_list_name).get('id')
             new_values = ip_list.get('items')
-            new_values = ip_list.get('items')
+            if not isinstance(new_values, list):
+                new_values = [new_values]
             for value in new_values:
                 new_list_value = {'value': value}
                 addr_list_manager.create_list_item(ip_list_id, new_list_value)
