@@ -124,9 +124,9 @@ def main():
     DBPASSWORD = keyring.get_password('cbase-db', DBUSER)
     DBNAME = os.getenv('DBNAME')
     
-    CISCOUSER = os.getenv('CISCOUSER')
-    CISCOPASS = keyring.get_password('cisco', CISCOUSER)
-    ASALIST = os.getenv('ASALIST')
+    # CISCOUSER = os.getenv('CISCOUSER')
+    # CISCOPASS = keyring.get_password('cisco', CISCOUSER)
+    # ASALIST = os.getenv('ASALIST')
     
     vpnlogin = args.login
     
@@ -157,7 +157,7 @@ def main():
     
     for UGSERVER in UGSERVERS.split(','):
         with UsergateClient(
-            host=UGSERVER,
+            host=UGSERVER.strip(),
             username=UGUSER,
             password=UGPASS
         ) as client:
