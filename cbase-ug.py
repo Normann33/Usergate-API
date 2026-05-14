@@ -193,6 +193,17 @@ def main():
                 
                 print(f'Item: {rule_item}')
             # logging.info(f"{vpnlogin} rule_item {rule_item}")
+                newrule = {}
+                newrule['name'] = rule_item.get('name') # Тут получаем VPN логин из аргумента командной строки
+                newrule['action'] = 'accept'
+                newrule['enabled'] = True
+                newrule['src_zones'] = []
+                newrule['dst_zones'] = []
+                newrule['src_ips'] = [] # Получаем значение из базы CBase
+                newrule['dst_ips'] = [] # Получаем значение из базы CBase
+                newrule['services'] = []
+                newrule['log'] = True
+                newrule['log_session_start'] = True
             
             current_rule = all_rules.get(vpnlogin)
             if current_rule:
@@ -202,19 +213,6 @@ def main():
             
             if args.create:
                 try:
-            
-                    newrule = {}
-                    newrule['name'] = rule_item.get('name') # Тут получаем VPN логин из аргумента командной строки
-                    newrule['action'] = 'accept'
-                    newrule['enabled'] = True
-                    newrule['src_zones'] = []
-                    newrule['dst_zones'] = []
-                    newrule['src_ips'] = [] # Получаем значение из базы CBase
-                    newrule['dst_ips'] = [] # Получаем значение из базы CBase
-                    newrule['services'] = []
-                    newrule['log'] = True
-                    newrule['log_session_start'] = True
-                    
                     # logging.info(f"{vpnlogin} newrule creating {newrule}")
                     
                     for zone_list in ['src_zones', 'dst_zones']:
