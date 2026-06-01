@@ -6,6 +6,7 @@ import xlwt
 import keyring
 import xmlrpc.client
 from dotenv import load_dotenv
+from keyrings.cryptfile.cryptfile import CryptFileKeyring
 from modules.ug_client import UsergateClient
 from modules.fw_rules import FirewallRules
 from modules.zones import Zones
@@ -40,7 +41,15 @@ def addr_output(addr_dict, sheet1, text_style, excel_counter, column_n):
 
 def main():
     
+    kr = CryptFileKeyring()
     load_dotenv()
+    
+    KEYPATH = os.getenv('KEYPATH')
+    
+    with open(KEYPATH + '/keyring.pass', 'r') as f:
+        kr.keyring_key = f.read().strip()
+    
+    keyring.set_keyring(kr)
 
     # UGUSER = os.getenv('TESTUGUSER')
     # UGPASS = os.getenv('TESTUGPASS')
