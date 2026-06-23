@@ -266,27 +266,26 @@ def main():
                     logger.info(f"{vpnlogin} {e}")
             
             elif args.update:
-                for addr_list_type in ['src_ips', 'dst_ips']:
-                    current_addr_list_id = current_rule.get(addr_list_type)[0][1]
-                    current_addr_list_name = all_addr_lists_id.get(current_addr_list_id).get('name')
-                    # print(current_addr_list_id)
-                    # addr_list_type = 'dst_ips'
-                    if db_iplist_name == current_addr_list_name:
-                        # Если название списков из базы и правила совпадают, удаляем и создаем новые элементы
-                        current_items = addr_list_manager.get_addr_list_items(current_addr_list_id, result_type='full')
-                        for item in current_items.get('items'):
-                            print(item.get('id'))
-                            addr_list_manager.delete_list_items(current_addr_list_id, item.get('id'))
-                        AddressList.addr_list_add_items(rule_item, addr_list_type, all_addr_lists_name, addr_list_manager)
-                        logger.info(f"{vpnlogin} new items created")
-                    else:
-                        new_ip_list_item = {'type': 'network', 'name': vpnlogin}
-                        new_addr_list_id = addr_list_manager.create_list(all_addr_lists_name, new_ip_list_item)
-                        all_addr_lists_name = addr_list_manager.get_all_address_lists('name') # Кэш списков адресов для поиска по name
-                        AddressList.addr_list_add_items(rule_item, addr_list_type, all_addr_lists_name, addr_list_manager)
-                        newrule['dst_ips'] = [['list_id', new_addr_list_id]]
-                        rule_manager.update_rule(current_rule_id, newrule)
-                        logger.info(f"{vpnlogin} Rule updated")
+                current_addr_list_id = current_rule.get('dst_ips')[0][1]
+                current_addr_list_name = all_addr_lists_id.get(current_addr_list_id).get('name')
+                print(current_addr_list_id)
+                addr_list_type = 'dst_ips'
+                if db_iplist_name == current_addr_list_name:
+                    # Если название списков из базы и правила совпадают, удаляем и создаем новые элементы
+                    current_items = addr_list_manager.get_addr_list_items(current_addr_list_id, result_type='full')
+                    for item in current_items.get('items'):
+                        print(item.get('id'))
+                        addr_list_manager.delete_list_items(current_addr_list_id, item.get('id'))
+                    AddressList.addr_list_add_items(rule_item, addr_list_type, all_addr_lists_name, addr_list_manager)
+                    logger.info(f"{vpnlogin} new items created")
+                else:
+                    new_ip_list_item = {'type': 'network', 'name': vpnlogin}
+                    new_addr_list_id = addr_list_manager.create_list(all_addr_lists_name, new_ip_list_item)
+                    all_addr_lists_name = addr_list_manager.get_all_address_lists('name') # Кэш списков адресов для поиска по name
+                    AddressList.addr_list_add_items(rule_item, addr_list_type, all_addr_lists_name, addr_list_manager)
+                    newrule['dst_ips'] = [['list_id', new_addr_list_id]]
+                    rule_manager.update_rule(current_rule_id, newrule)
+                    logger.info(f"{vpnlogin} Rule updated")
             
             elif args.delete:
                 current_addr_list_id = current_rule.get('dst_ips')[0][1]
