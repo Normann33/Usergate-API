@@ -132,6 +132,7 @@ def addr_list_update(
         new_addr_list_id = addr_list_manager.create_list(all_addr_lists_name, new_ip_list_item)
         all_addr_lists_name = addr_list_manager.get_all_address_lists('name') # Кэш списков адресов для поиска по name
         AddressList.addr_list_add_items(rule_item, addr_list_type, all_addr_lists_name, addr_list_manager)
+        logger.info(f"{addr_list_name} new items created")
         newrule[addr_list_type] = [['list_id', new_addr_list_id]]
         rule_manager.update_rule(current_rule_id, newrule)
 
