@@ -80,7 +80,7 @@ class AddressList:
             result = self.client.server.v2.nlists.add(self.client.auth_token, new_list)
             logger.info(f'Список ip {new_list.get('name')} успешно создан (ID: {result})')
         except xmlrpc.client.Fault as e:
-            if e.faultCode == 409 and 'Object with the same name already exists' in e.faultString:
+            if e.faultCode == 409 and 'with the same name already exists' in e.faultString:
                 result = self.get_by_key(addr_list_dict, new_list.get('name'))
                 logger.error(f'Список ip {new_list.get('name')} уже существует (ID: {result})')
             else:
