@@ -156,13 +156,7 @@ def main():
     DBPASSWORD = keyring.get_password('cbase-db', DBUSER)
     DBNAME = os.getenv('DBNAME')
     
-    # CISCOUSER = os.getenv('CISCOUSER')
-    # CISCOPASS = keyring.get_password('cisco', CISCOUSER)
-    # ASALIST = os.getenv('ASALIST')
-    
     vpnlogin = args.login
-    
-    # action = 'create' if args.create else 'update' if args.update else 'delete' if args.delete else 'deactivate'
     
     action = 'deactivate' # Значение по умолчанию
     if args.create: action = 'create'
