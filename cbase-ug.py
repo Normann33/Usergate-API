@@ -162,7 +162,12 @@ def main():
     
     vpnlogin = args.login
     
-    action = 'create' if args.create else 'update' if args.update else 'delete' if args.delete else 'deactivate'
+    # action = 'create' if args.create else 'update' if args.update else 'delete' if args.delete else 'deactivate'
+    
+    action = 'deactivate' # Значение по умолчанию
+    if args.create: action = 'create'
+    elif args.update: action = 'update'
+    elif args.delete: action = 'delete'
 
     logger.info(f'============================Запуск============================')
     logger.info(f"Пользователь: {args.login}, действие: {action}")
