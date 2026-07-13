@@ -220,7 +220,7 @@ def main():
                     'dst_zones': ['Trusted VPN'],
                     'src_ips': [{'name': db_data.get('ip'), 'items': db_data.get('ip')}], # Тут адрес который выдается пользователю при подключении по впн, читаем из базы
                     'dst_ips': [{'name': db_iplist_name, 'items': db_iplist}], # Тут читаем разрешенные имена из базы, если адрес один - именуем список по адресу, если несколько - по впн логину
-                    'services': [{'name': 'RDP', 'protocols': ['tcp: 3389']}, {'name': 'SSH', 'protocols': ['tcp: 22']}] # Пока хардкодим RDP и SSH
+                    'services': [{'name': 'RDP', 'protocols': ['tcp: 3389']}, {'name': 'SSH', 'protocols': ['tcp: 22']}, {'name': 'NoMachine', 'protocols': ['tcp: 4000']}] # Пока хардкодим RDP и SSH
                     }
                 
                 print(f'Item: {rule_item}')
